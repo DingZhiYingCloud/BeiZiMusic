@@ -1,0 +1,42 @@
+{% extends 'template.html' %}
+
+{% block title %}{{ title }} - 杯子音乐网{% endblock %}
+{% block keywords %}{{ title }},新歌榜,TOP榜单,歌曲排行榜,网络热门歌曲,流行音乐排行,杯子音乐网{% endblock %}
+{% block description %}杯子音乐网{{ title }},提供最新{{ title }}歌曲排行榜,网络热门歌曲,新歌速递,流行音乐排行,免费在线试听和下载榜单歌曲。{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="layui-container">
+        {% if hot_rankings %}
+        <div class="ilingku_fl">
+            <div class="title"><h1>热门榜单</h1></div>
+            {% for item in hot_rankings %}
+            <li><a href="{{ item.link }}" {% if item.current %}class="current"{% endif %}>{{ item.title }}</a></li>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="layui-row lkbj pm10">
+            <div class="lktitle">
+                <h1>{{ title }}</h1>
+            </div>
+            <div class="play_list">
+                <ul>
+                    {% for song in songs %}
+                    <li>
+                        <div class="name"><a href="{{ song.link }}" target="_mp3">{{ song.title }}</a></div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if pagination.links %}
+            <div class="page">
+                {% for link in pagination.links %}
+                <a class="{{ link.class }}" {% if link.href %}href="{{ link.href }}"{% endif %}>{{ link.text }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% include 'common_html/footer.html' %}
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'template.html' %}
+
+{% block title %}{{ song.artists|join:'/' }} - {{ song.name }}MP3下载 - 杯子音乐网{% endblock %}
+{% block keywords %}{{ song.name }},{{ song.name }}MP3下载,{{ song.name }}歌词,{{ song.name }}免费下载,{{ song.artists|join:',' }},杯子音乐网{% endblock %}
+{% block description %}杯子音乐网提供{{ song.artists|join:'/' }}演唱的{{ song.name }}MP3免费在线试听和下载,包含{{ song.name }}歌词,{{ song.name }}高清MV,{{ song.artists|join:'/' }}更多好听的歌推荐。{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="layui-container">
+        <div class="play_left">
+            {# jPlayer 媒体容器（隐藏，控件由 jp_container_1 承载）#}
+            <div id="player" style="display:block;width:0;height:0;"></div>
+            <div id="jp_container_1">
+                <div class="djpic">
+                    <img class="rotate" id="mcover" src="{{ song.cover }}" alt="{{ song.name }}">
+                    <div class="state"><span>已暂停</span></div>
+                </div>
+                <div class="jp_right">
+                    <div class="djname"><h1>{{ song.artists|join:'&' }} - {{ song.name }}</h1></div>
+                    <div class="jp-progress">
+                        <div class="jp-seek-bar"><div class="jp-play-bar"></div></div>
+                    </div>
+                    <div class="jp-controls">
+                        <li><a href="javascript:void(0);" class="jp-play" title="播放">播放</a><a href="javascript:void(0);" class="jp-pause" title="暂停" style="display:none;">暂停</a></li>
+                    </div>
+                    <div class="jp-time-holder">
+                        <span class="jp-current-time">00:00</span> / <span class="jp-duration">00:00</span>
+                    </div>
+                    <div class="jp-volume">
+                        <li><a href="javascript:void(0);" class="jp-mute" title="静音">静音</a><a href="javascript:void(0);" class="jp-unmute" title="取消静音" style="display:none;">取消静音</a></li>
+                        <div class="jp-volume-bar"><div class="jp-volume-bar-value" style="width:100%;"></div></div>
+                    </div>
+                </div>
+            </div>
+            {# 歌词容器：由 $.lrc 插件根据播放进度动态填充并同步滚动 #}
+            <div class="lrc_geci" id="play_geci">
+                <ul id="lrc_list"></ul>
+            </div>
+        </div>
+        <div class="player_right">
+            <div class="play_singer">
+                <div class="pic">
+                    <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}" target="_blank">
+                        <img src="{{ song.cover }}" alt="{{ song.name }}">
+                    </a>
+                </div>
+                <div class="center">
+                    <div class="name">
+                        <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}" target="_blank">{{ song.artists|join:'/' }}</a>
+                    </div>
+                    <div class="info">
+                        <a href="{{ song.pack_url|default:'#' }}" target="_blank" style="color:#0c751e;font-weight:bold;">
+                            <i class="fa fa-cloud-download"></i> 打包TA的全部歌曲
+                        </a>
+                    </div>
+                </div>
+                <div class="btn">
+                    <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}" target="_blank">查看</a>
+                </div>
+            </div>
+            <div class="sm">温馨提示：歌曲来自搜索引擎，本站不做商业用途，不存储任何音频文件，版权属于各音乐门户！</div>
+        </div>
+        {% if daily_recommend %}
+        <div class="play_list">
+            <div class="title"><h1>每日推荐</h1></div>
+            <ul>
+                {% for item in daily_recommend %}
+                <li>
+                    <div class="name"><a href="{{ item.link }}" target="_mp3">{{ item.title }}</a></div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% include 'common_html/footer.html' %}
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/jplayer.min.js"></script>
+<script src="/static/js/play.js?v=v3"></script>
+<script>
+$(function(){
+    initPlayer('{{ play_url|escapejs }}', '{{ song.cover|escapejs }}', '{{ lyrics|escapejs }}');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'template.html' %}
+
+{% block title %}{{ title }} - 杯子音乐网{% endblock %}
+{% block keywords %}歌单,{{ title }},音乐歌单,歌单推荐,在线歌单,好听的歌单,杯子音乐网,爱听音乐网{% endblock %}
+{% block description %}杯子音乐网{{ title }},精选{{ title }}音乐歌单,提供流行、摇滚、民谣、电子、经典老歌等各类风格歌单在线试听,发现好听的歌单合集。{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="layui-container">
+        {% for filter in filters %}
+        <div class="ilingku_fl">
+            <li>{{ filter.label }}</li>
+            {% for option in filter.options %}
+            <li><a href="{{ option.link }}" {% if option.current %}class="current"{% endif %}>{{ option.title }}</a></li>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <div class="video_list">
+            <div class="title">
+                <h1>{{ title }}</h1>
+                {% if total %}<div class="pagedata">共有：<span>{{ total }}</span>个歌单</div>{% endif %}
+            </div>
+            <ul class="play">
+                {% for playlist in playlists %}
+                <li>
+                    <div class="pic"><a href="{{ playlist.link }}" target="_blank"><img src="{{ playlist.pic }}" alt="{{ playlist.title }}"></a></div>
+                    <div class="name"><a href="{{ playlist.link }}" title="{{ playlist.title }}" target="_blank">{{ playlist.title }}</a></div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% if pagination.links %}
+            <div class="page">
+                {% for link in pagination.links %}
+                <a class="{{ link.class }}" {% if link.href %}href="{{ link.href }}"{% endif %}>{{ link.text }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% include 'common_html/footer.html' %}
+{% endblock %}

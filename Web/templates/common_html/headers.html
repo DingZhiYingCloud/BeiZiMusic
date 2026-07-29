@@ -1,0 +1,31 @@
+<header>
+    <div class="layui-container">
+        <div class="logo">
+            <div class="logo"><a href="/"><img src="/static/images/logo.png" alt="杯子音乐网" /></a></div>
+        </div>
+        <div class="pull-right">
+            <div class="nav">
+                <ul>
+                    <li><a href="/" title="首页" class="active"><i class="fa fa-home" aria-hidden="true"></i>首页</a></li>
+                    <li><a href="/list/new.html" title="New新歌榜" target="_dh"><i class="fa fa-bar-chart"
+                                aria-hidden="true"></i>新歌榜</a>
+                        <new>new</new>
+                    </li>
+                    <li><a href="/list/top.html" title="TOP榜单" target="_dh"><i class="fa fa-line-chart"
+                                aria-hidden="true"></i>TOP榜单</a></li>
+                    <li><a href="/singerlist/index/index/index/index.html" title="原创歌手"><i
+                                class="fa fa-user-circle"></i>歌手</a></li>
+                    <li><a href="/playtype/index.html" title="音乐歌单" target="_dh"><i class="fa fa-diamond"></i>歌单</a>
+                    </li>
+                    <li><a href="/mvlist/index.html" title="高清MV" target="_dh"><i class="fa fa-film"></i>高清MV</a></li>
+                </ul>
+            </div>
+            <form class="search" method="get" action="/so.php?" target="so" name="post_new"
+                onsubmit="return CheckPost();">
+                <input type="text" name="wd" id="wd" class="seh_v" placeholder="输入关键字搜索">
+                <button class="seh_b" type="submit"><span class="fa fa-search"></span></button>
+            </form>
+        </div>
+    </div>
+    </div>
+</header>

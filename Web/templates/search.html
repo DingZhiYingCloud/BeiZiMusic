@@ -1,0 +1,34 @@
+{% extends 'template.html' %}
+
+{% block title %}{{ keyword }}搜索 - {{ keyword }}相关歌曲下载 - 杯子音乐网{% endblock %}
+{% block keywords %}{{ keyword }},{{ keyword }}搜索,{{ keyword }}歌曲下载,{{ keyword }}MP3,{{ keyword }}相关歌曲,{{ keyword }}歌词,杯子音乐网{% endblock %}
+{% block description %}杯子音乐网搜索{{ keyword }}相关歌曲结果,提供{{ keyword }}歌曲MP3免费下载,{{ keyword }}歌词,{{ keyword }}MV视频,发现{{ keyword }}好听的歌。{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="layui-container">
+        <div class="layui-row lkbj pm10">
+            <div class="lktitle">
+                <h1>{{ keyword }} 搜索结果</h1>
+            </div>
+            <div class="play_list">
+                <ul>
+                    {% for song in results %}
+                    <li>
+                        <div class="name"><a href="{{ song.link }}" target="_mp3">{{ song.title }}</a></div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if pagination.links %}
+            <div class="page">
+                {% for link in pagination.links %}
+                <a class="{{ link.class }}" {% if link.href %}href="{{ link.href }}"{% endif %}>{{ link.text }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% include 'common_html/footer.html' %}
+{% endblock %}

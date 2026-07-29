@@ -1,0 +1,77 @@
+{% extends 'template.html' %}
+
+{% block title %}{{ title }}MV视频 - 杯子音乐网{% endblock %}
+{% block keywords %}{{ title }}MV,{{ singer.name }}MV,高清MV,MV视频,音乐MV,在线MV,杯子音乐网{% endblock %}
+{% block description %}杯子音乐网提供{{ singer.name }}演唱的{{ title }}MV视频高清在线观看,{{ title }}音乐MV,{{ singer.name }}更多MV视频推荐,免费观看高清音乐MV。{% endblock %}
+
+{% block head %}
+{# DPlayer 视频播放器资源（bootcdn CDN）#}
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/dplayer/1.27.1/DPlayer.min.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/dplayer/1.27.1/DPlayer.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="layui-container">
+        <div class="play_left">
+            <div class="title"><h1>{{ title }}</h1></div>
+            <div class="player" id="dplayer"></div>
+        </div>
+        <div class="play_right">
+            {% if singer.name %}
+            <div class="play_singer">
+                <div class="pic"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank"><img src="{{ singer.pic }}" alt="{{ singer.name }}"></a></div>
+                <div class="center">
+                    <div class="name"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">{{ singer.name }}</a></div>
+                    <div class="info">{{ singer.video_count }}</div>
+                </div>
+                <div class="btn"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">查看</a></div>
+            </div>
+            {% endif %}
+            {% if album.name %}
+            <div class="sm">所属专辑：<a href="{{ album.link }}" title="{{ album.name }}" target="_blank">{{ album.name }}</a></div>
+            {% endif %}
+            {% if language_time %}
+            <div class="sm">{{ language_time }}</div>
+            {% endif %}
+            <div class="sm">温馨提示：歌曲来自搜索引擎，本站不做商业用途，不存储任何音频文件，版权属于各音乐门户！</div>
+        </div>
+        {% if daily_recommend %}
+        <div class="play_list">
+            <div class="title"><h1>每日推荐</h1></div>
+            <ul>
+                {% for item in daily_recommend %}
+                <li>
+                    <div class="name"><a href="{{ item.link }}" target="_mp3">{{ item.title }}</a></div>
+                    {% if item.mv_link %}<div class="mv"><a href="{{ item.mv_link }}" target="_mv">mv</a></div>{% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% include 'common_html/footer.html' %}
+{% endblock %}
+
+{% block js %}
+<script>
+const dp = new DPlayer({
+    container: document.getElementById('dplayer'),
+    autoplay: true,
+    theme: '#3fa6fc',
+    loop: true,
+    allowfullscreen: true,
+    video: {
+        {% if cover %}pic: "{{ cover|escapejs }}",{% endif %}
+        quality: [
+            {% for q in qualities %}
+            {type: 'auto', name: '{{ q.name }}', url: '{{ q.url|escapejs }}'},
+            {% endfor %}
+        ],
+        defaultQuality: 0
+    },
+    contextmenu: [{text: "杯子音乐网", link: "/"}]
+});
+</script>
+{% endblock %}
