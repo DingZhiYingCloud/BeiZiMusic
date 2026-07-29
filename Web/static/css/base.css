@@ -17,6 +17,7 @@ header .logo span {font-size:12px;}
 header .logo a,header .logo a * {color:#f0f0f0;font-family:'寰蒋闆呴粦';}
 header .logo p {font-size:12px;}
 header .logo .wap {color:#fff;position:absolute;right:0px;bottom:36px;}
+header .logo img {height:42px;width:auto;max-width:100%;object-fit:contain;display:block;}
 header .nav-iocn {display:none;}
 header .nav {height:60px;float:left;display:flex;align-items:center;}
 header .nav .search {float:left;}
@@ -156,7 +157,7 @@ footer .prompt {color:#999;}
 .ilingku_list li .pic a:hover .fa {-webkit-transform:rotate(120deg);-moz-transform:rotate(120deg);transform:rotate(120deg);opacity:1;}
 .ilingku_list li .name {float:left;width:100%;height:24px;line-height:24px;overflow:hidden;margin-top:8px;}
 @media screen and (max-width:750px) {
-.logo img {border: none;height: 42px;}
+.logo img {border:none;height:42px;width:auto;max-width:100%;object-fit:contain;display:block;}
 .lksinger_list li {width:calc(33.33% - 20px);}
 .ilingku_list li {width:calc(33.3333% - 20px);}
 .ilingkuplay_list li {width:calc(100% - 20px);}
