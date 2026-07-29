@@ -20,4 +20,6 @@ urlpatterns = [
     path('mvlist/<str:mvtype>.html', request.mvlist, name='mvlist'),
     path('mvlist/<str:mvtype>/<int:page>.html', request.mvlist, name='mvlist_page'),
     path('video/<sid>.html', request.video, name='video'),
+    path('playlist/<sid>.html', request.playlist, name='playlist'),
+    path('playlist/<sid>/<int:page>.html', request.playlist, name='playlist_page'),
 ]

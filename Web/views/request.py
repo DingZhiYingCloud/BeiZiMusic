@@ -127,3 +127,28 @@ def video(request, sid):
             'cover': '',
         }
     return render(request, 'video.html', data)
+
+
+def playlist(request, sid, page=1):
+    """歌单详情页：sid 为歌单id，page 为歌曲列表页码（路径参数）"""
+    try:
+        data = Music2t58Spider().fetch_playlist(sid, page)
+    except Exception:
+        data = {
+            'sid': sid,
+            'playlist': {},
+            'total': '',
+            'songs': [],
+            'pagination': {'links': []},
+        }
+    return render(request, 'playlist.html', data)
+
+
+def error_404(request, exception=None):
+    """404 错误页：访问不存在的路径或文件时返回（DEBUG=False 时生效）"""
+    return render(request, '404.html', status=404)
+
+
+def error_500(request, exception=None):
+    """500 错误页：服务器内部错误时返回（DEBUG=False 时生效）"""
+    return render(request, '500.html', status=500)

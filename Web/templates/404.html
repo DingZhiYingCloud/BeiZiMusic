@@ -1,0 +1,22 @@
+{% extends 'template.html' %}
+
+{% block title %}页面未找到 - 杯子音乐网{% endblock %}
+{% block keywords %}404,页面未找到,杯子音乐网{% endblock %}
+{% block description %}杯子音乐网404错误页面,您访问的页面不存在或已被删除,请返回首页继续浏览。{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="layui-container">
+        <div class="error-page">
+            <div class="error-code">404</div>
+            <h1>抱歉，您访问的页面不存在</h1>
+            <p>可能页面已删除、URL 有误，或您输入的地址不正确。</p>
+            <div class="error-btns">
+                <a href="/">返回首页</a>
+                <a href="javascript:history.back();" class="error-btn-back">返回上一页</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'common_html/footer.html' %}
+{% endblock %}

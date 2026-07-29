@@ -11,6 +11,10 @@ urlpatterns = [
     path('', include('Web.views.urls')), # 前端路由
 ]
 
+# 自定义错误页处理（DEBUG=False 时生效）
+handler404 = 'Web.views.request.error_404'
+handler500 = 'Web.views.request.error_500'
+
 # 静态文件 & 媒体文件服务
 # DEBUG=True 时 Django 自动通过 static() 辅助函数服务
 # DEBUG=False 时 static() 返回空列表，需要手动添加路由

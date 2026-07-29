@@ -520,3 +520,12 @@ header .search .fa {
 .popup-footer .url em{margin:0 3px;font-size:12px}
 }
 */
+/* 错误页（404/500）公共样式 */
+.error-page { text-align:center; padding:60px 20px; background:#fff; margin-top:15px; }
+.error-code { font-size:90px; font-weight:bold; color:#3d8137; line-height:1; }
+.error-page h1 { font-size:24px; color:#333; margin:20px 0 10px; }
+.error-page p { color:#999; font-size:14px; margin-bottom:30px; }
+.error-btns a { display:inline-block; padding:10px 30px; border-radius:20px; margin:0 10px; }
+.error-btns a:first-child { background:#3d8137; color:#fff; }
+.error-btn-back { background:#fff; color:#3d8137; border:1px solid #3d8137; }
+@media screen and (max-width:750px) { .error-code { font-size:60px; } .error-page h1 { font-size:18px; } }

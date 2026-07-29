@@ -429,6 +429,45 @@ class Music2t58Spider:
             result.append({'label': label, 'options': options})
         return result
 
+    def fetch_playlist(self, sid, page=1):
+        """抓取歌单详情页：歌单信息 / 歌曲列表 / 分页
+
+        URL 规则：/playlist/{sid}/{page}.html，第1页 /playlist/{sid}.html。
+        歌曲列表结构与搜索结果一致，复用 _parse_search_results。
+        """
+        if page > 1:
+            url = f'{self.HOME_URL}playlist/{sid}/{page}.html'
+        else:
+            url = f'{self.HOME_URL}playlist/{sid}.html'
+        tree = etree.HTML(self._get_html(url))
+
+        # 歌曲总数（.pagedata span）
+        total_nodes = tree.xpath('//div[@class="pagedata"]//span//text()')
+        total = total_nodes[0].strip() if total_nodes else ''
+
+        return {
+            'sid': sid,
+            'playlist': self._parse_playlist_info(tree),
+            'total': total,
+            'songs': self._parse_search_results(tree),
+            'pagination': self._parse_pagination(tree),
+        }
+
+    def _parse_playlist_info(self, tree):
+        """解析歌单信息：title / pic / info（div.singer_info，与歌手详情页同结构）"""
+        box = tree.xpath('//div[@class="singer_info"]')
+        if not box:
+            return {}
+        box = box[0]
+        title = box.xpath('.//h1/text()')
+        pic = box.xpath('.//div[@class="pic"]//img/@src')
+        info = box.xpath('.//div[@class="info"]//text()')
+        return {
+            'title': title[0].strip() if title else '',
+            'pic': pic[0] if pic else '',
+            'info': ''.join(info).strip(),
+        }
+
     def fetch_mvlist(self, mvtype='index', page=1):
         """抓取MV列表页：分类筛选 / MV列表 / 分页
 

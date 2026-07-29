@@ -107,7 +107,7 @@ USE_TZ = True # 开启时区支持
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'Web/static')
 
 
 # 默认主键字段类型配置
