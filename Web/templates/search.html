@@ -7,21 +7,27 @@
 {% block content %}
 <div class="main">
     <div class="layui-container">
-        <div class="layui-row lkbj pm10">
-            <div class="lktitle">
-                <h1>{{ keyword }} 搜索结果</h1>
+        <!-- 搜索结果（原模块名：搜索结果） -->
+        <div class="bz-card">
+            <div class="bz-title">
+                <h1>搜索「{{ keyword }}」</h1>
+                {% if results %}<div class="pagedata">共 <span>{{ results|length }}</span> 条</div>{% endif %}
             </div>
-            <div class="play_list">
+            <div class="bz-song-list">
                 <ul>
                     {% for song in results %}
                     <li>
-                        <div class="name"><a href="{{ song.link }}" target="_mp3">{{ song.title }}</a></div>
+                        <i class="snum">{{ forloop.counter }}</i>
+                        <div class="sname"><a href="{{ song.link }}" target="_mp3" title="{{ song.title }}">{{ song.title }}</a></div>
+                        <span class="sico"><i class="fa fa-play"></i></span>
                     </li>
+                    {% empty %}
+                    <div class="bz-empty"><i class="fa fa-search"></i>没有找到「{{ keyword }}」相关歌曲，换个关键词试试吧</div>
                     {% endfor %}
                 </ul>
             </div>
             {% if pagination.links %}
-            <div class="page">
+            <div class="bz-pager">
                 {% for link in pagination.links %}
                 <a class="{{ link.class }}" {% if link.href %}href="{{ link.href }}"{% endif %}>{{ link.text }}</a>
                 {% endfor %}

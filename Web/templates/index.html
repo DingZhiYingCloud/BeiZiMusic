@@ -7,13 +7,55 @@
 {% block content %}
 <div class="main">
     <div class="layui-container">
-        <div class="layui-row lkbj">
-            <div class="lktitle">
-                <a href="/singerlist/index/index/index/index.html" target="_blank">
-                    <h1>热门歌手</h1>
+        <!-- 一、焦点图轮播（推荐歌单封面） -->
+        <div class="bz-banner" id="bzBanner">
+            <div class="bz-banner-track">
+                <a class="bz-banner-item" href="/playlist/ZG53dndrY2hraA.html" target="_mp3"
+                    style="background-image:url('https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/73/76/1784608524302_504068773_500.jpg')">
+                    <div class="bz-banner-inner">
+                        <h2>Eason On Repeat｜可一可再，常听常在</h2>
+                        <p>经典粤语歌单精选，让你一次听个够</p>
+                        <span class="bz-banner-btn">立即试听</span>
+                    </div>
+                </a>
+                <a class="bz-banner-item" href="/playlist/ZHZzdmR2d3ZuaA.html" target="_mp3"
+                    style="background-image:url('https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/76/62/1732158724091_139925276_500.jpg')">
+                    <div class="bz-banner-inner">
+                        <h2>经典粤语对唱丨用歌声演绎深情</h2>
+                        <p>百听不厌的粤语对唱，见证黄金年代的旋律</p>
+                        <span class="bz-banner-btn">立即试听</span>
+                    </div>
+                </a>
+                <a class="bz-banner-item" href="/playlist/ZGNkbW54Y3hzbQ.html" target="_mp3"
+                    style="background-image:url('https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/18/32/1747724223257_626037818_500.jpg')">
+                    <div class="bz-banner-inner">
+                        <h2>经典老歌 | 有些人，错过就不在</h2>
+                        <p>一首老歌一段回忆，重温那些年我们单曲循环的旋律</p>
+                        <span class="bz-banner-btn">立即试听</span>
+                    </div>
+                </a>
+                <a class="bz-banner-item" href="/playlist/ZGNubm5tbnhraA.html" target="_mp3"
+                    style="background-image:url('https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/85/22/1767253330366_224567985_500.jpg')">
+                    <div class="bz-banner-inner">
+                        <h2>回忆杀！林忆莲的金曲回响</h2>
+                        <p>天后的声音，唱尽都市人的爱与哀愁</p>
+                        <span class="bz-banner-btn">立即试听</span>
+                    </div>
                 </a>
             </div>
-            <div class="lksinger_list">
+            <button class="bz-banner-nav bz-banner-prev" type="button">&#8249;</button>
+            <button class="bz-banner-nav bz-banner-next" type="button">&#8250;</button>
+            <div class="bz-banner-dots"></div>
+        </div>
+
+        <!-- 二、热门歌手（原模块名：热门歌手） -->
+        <div class="layui-row lkbj bz-block">
+            <div class="lktitle">
+                <a href="/singerlist/index/index/index/index.html" target="_blank">
+                    <h1>星芒歌手</h1>
+                </a>
+            </div>
+            <div class="lksinger_list bz-singers">
                 <ul>
                     {% for singer in hot_singers %}
                     <li{% if forloop.counter > 6 %} class="hide-wap"{% endif %}>
@@ -26,129 +68,141 @@
             </div>
         </div>
 
-        <div class="layui-row lkbj pm10">
-            <div class="lktitle">
-                <a href="/list/new.html" target="_blank">
-                    <h1>歌曲飙升榜，这里集合网络热歌红歌！</h1>
-                </a>
-                <div class="pagedata">更新时间：<span>2026-07-29</span></div>
-            </div>
-            <div class="ilingkuplay_list">
-                <ul>
-                    {% for song in rising_songs %}
+        <!-- 三、双栏榜单：歌曲飙升榜 + 流行趋势榜（原模块名：歌曲飙升榜 / 流行趋势榜） -->
+        <div class="bz-chart-grid">
+            <div class="bz-chart-card">
+                <div class="bz-chart-head">
+                    <h1>破浪热曲</h1>
+                    <span class="pagedata">更新时间：<span>2026-07-29</span></span>
+                    <a class="more" href="/list/new.html" target="_blank">更多 &#8250;</a>
+                </div>
+                <ol class="bz-chart-ol">
+                    {% for song in rising_songs|slice:":10" %}
                     <li>
-                        <div class="name"><a href="{{ song.link }}" target="_mp3" title="{{ song.title }}">{{ song.title }}</a></div>
+                        <i class="num">{{ forloop.counter }}</i>
+                        <a href="{{ song.link }}" target="_mp3" title="{{ song.title }}">{{ song.title }}</a>
                     </li>
                     {% endfor %}
-                </ul>
+                </ol>
+            </div>
+            <div class="bz-chart-card">
+                <div class="bz-chart-head">
+                    <h1>流行脉搏</h1>
+                    <a class="more" href="/list/djwuqu.html" target="_blank">更多 &#8250;</a>
+                </div>
+                <ol class="bz-chart-ol">
+                    {% for song in trending_songs|slice:":10" %}
+                    <li>
+                        <i class="num">{{ forloop.counter }}</i>
+                        <a href="{{ song.link }}" target="_mp3" title="{{ song.title }}">{{ song.title }}</a>
+                    </li>
+                    {% endfor %}
+                </ol>
             </div>
         </div>
-        <div class="layui-row lkbj">
+
+        <!-- 四、推荐歌单（原模块名：推荐歌单） -->
+        <div class="layui-row lkbj bz-block">
             <div class="lktitle">
                 <a href="/playtype/index.html" target="_blank">
-                    <h1>推荐歌单</h1>
+                    <h1>拾光歌单</h1>
                 </a>
+                <a class="more" href="/playtype/index.html" target="_blank">更多 &#8250;</a>
             </div>
-            <div class="ilingku_list">
-                <ul>
-                    <li>
-                        <div class="pic"><a href="/playlist/ZG53dndrY2hraA.html" target="_mp3"
-                                title="Eason On Repeat｜可一可再，常听常在"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/73/76/1784608524302_504068773_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZG53dndrY2hraA.html" title="Eason On Repeat｜可一可再，常听常在"
-                                target="_mp3">Eason On Repeat｜可一可再，常听常在</a></div>
-                    </li>
-                    <li>
-                        <div class="pic"><a href="/playlist/ZHZzdmR2d3ZuaA.html" target="_mp3"
-                                title="经典粤语对唱丨用歌声演绎深情"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/76/62/1732158724091_139925276_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZHZzdmR2d3ZuaA.html" title="经典粤语对唱丨用歌声演绎深情"
-                                target="_mp3">经典粤语对唱丨用歌声演绎深情</a></div>
-                    </li>
-                    <li>
-                        <div class="pic"><a href="/playlist/ZGNkbW54Y3hzbQ.html" target="_mp3"
-                                title="经典老歌 | 有些人，错过就不在"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/18/32/1747724223257_626037818_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZGNkbW54Y3hzbQ.html" title="经典老歌 | 有些人，错过就不在"
-                                target="_mp3">经典老歌 | 有些人，错过就不在</a></div>
-                    </li>
-                    <li>
-                        <div class="pic"><a href="/playlist/ZGNubm5tbnhraA.html" target="_mp3" title="回忆杀！林忆莲的金曲回响"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/85/22/1767253330366_224567985_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZGNubm5tbnhraA.html" title="回忆杀！林忆莲的金曲回响"
-                                target="_mp3">回忆杀！林忆莲的金曲回响</a></div>
-                    </li>
-                    <li>
-                        <div class="pic"><a href="/playlist/ZHZka3duZHhtaw.html" target="_mp3"
-                                title="经典老歌30首丨经久源远，回忆重演"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/53/83/1710637999289_562026053_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZHZka3duZHhtaw.html" title="经典老歌30首丨经久源远，回忆重演"
-                                target="_mp3">经典老歌30首丨经久源远，回忆重演</a></div>
-                    </li>
-                    <li>
-                        <div class="pic"><a href="/playlist/ZGNud3hoY3hodg.html" target="_mp3"
-                                title="华语经典：黑胶里的派对金曲"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/71/59/1764927904442_499998371_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZGNud3hoY3hodg.html" title="华语经典：黑胶里的派对金曲"
-                                target="_mp3">华语经典：黑胶里的派对金曲</a></div>
-                    </li>
-                    <li class="hide-wap">
-                        <div class="pic"><a href="/playlist/ZHZudm5jY3h4Yw.html" target="_mp3"
-                                title="短视频DJ热门歌曲｜网红BGM"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/25/94/1725873340689_174039025_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZHZudm5jY3h4Yw.html" title="短视频DJ热门歌曲｜网红BGM"
-                                target="_mp3">短视频DJ热门歌曲｜网红BGM</a></div>
-                    </li>
-                    <li class="hide-wap">
-                        <div class="pic"><a href="/playlist/ZGNoa2todnNrcw.html" target="_mp3"
-                                title="2026短视频热门歌曲合集【精选】"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/23/76/1768379343889_135259123_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZGNoa2todnNrcw.html" title="2026短视频热门歌曲合集【精选】"
-                                target="_mp3">2026短视频热门歌曲合集【精选】</a></div>
-                    </li>
-                    <li class="hide-wap">
-                        <div class="pic"><a href="/playlist/ZGNueHdzeG5uaw.html" target="_mp3"
-                                title="翻唱经典集｜一起重返学生时代"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/98/66/1765771556668_577097598_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZGNueHdzeG5uaw.html" title="翻唱经典集｜一起重返学生时代"
-                                target="_mp3">翻唱经典集｜一起重返学生时代</a></div>
-                    </li>
-                    <li class="hide-wap">
-                        <div class="pic"><a href="/playlist/ZHZzY254ZGtkbg.html" target="_mp3"
-                                title="英文流行｜好听又治愈的欧美歌曲"><img
-                                    src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/25/94/1732692064935_174039025_500.jpg"
-                                    height=85 width=105></a></div>
-                        <div class="name"><a href="/playlist/ZHZzY254ZGtkbg.html" title="英文流行｜好听又治愈的欧美歌曲"
-                                target="_mp3">英文流行｜好听又治愈的欧美歌曲</a></div>
-                    </li>
-                </ul>
+            <div class="bz-playlists">
+                <div class="bz-play-item">
+                    <div class="pic"><a href="/playlist/ZG53dndrY2hraA.html" target="_mp3"
+                            title="Eason On Repeat｜可一可再，常听常在"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/73/76/1784608524302_504068773_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZG53dndrY2hraA.html" title="Eason On Repeat｜可一可再，常听常在"
+                        target="_mp3">Eason On Repeat｜可一可再，常听常在</a>
+                </div>
+                <div class="bz-play-item">
+                    <div class="pic"><a href="/playlist/ZHZzdmR2d3ZuaA.html" target="_mp3"
+                            title="经典粤语对唱丨用歌声演绎深情"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/76/62/1732158724091_139925276_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZHZzdmR2d3ZuaA.html" title="经典粤语对唱丨用歌声演绎深情"
+                        target="_mp3">经典粤语对唱丨用歌声演绎深情</a>
+                </div>
+                <div class="bz-play-item">
+                    <div class="pic"><a href="/playlist/ZGNkbW54Y3hzbQ.html" target="_mp3"
+                            title="经典老歌 | 有些人，错过就不在"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/18/32/1747724223257_626037818_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZGNkbW54Y3hzbQ.html" title="经典老歌 | 有些人，错过就不在"
+                        target="_mp3">经典老歌 | 有些人，错过就不在</a>
+                </div>
+                <div class="bz-play-item">
+                    <div class="pic"><a href="/playlist/ZGNubm5tbnhraA.html" target="_mp3" title="回忆杀！林忆莲的金曲回响"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/85/22/1767253330366_224567985_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZGNubm5tbnhraA.html" title="回忆杀！林忆莲的金曲回响"
+                        target="_mp3">回忆杀！林忆莲的金曲回响</a>
+                </div>
+                <div class="bz-play-item">
+                    <div class="pic"><a href="/playlist/ZHZka3duZHhtaw.html" target="_mp3"
+                            title="经典老歌30首丨经久源远，回忆重演"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/53/83/1710637999289_562026053_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZHZka3duZHhtaw.html" title="经典老歌30首丨经久源远，回忆重演"
+                        target="_mp3">经典老歌30首丨经久源远，回忆重演</a>
+                </div>
+                <div class="bz-play-item">
+                    <div class="pic"><a href="/playlist/ZGNud3hoY3hodg.html" target="_mp3"
+                            title="华语经典：黑胶里的派对金曲"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/71/59/1764927904442_499998371_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZGNud3hoY3hodg.html" title="华语经典：黑胶里的派对金曲"
+                        target="_mp3">华语经典：黑胶里的派对金曲</a>
+                </div>
+                <div class="bz-play-item hide-wap">
+                    <div class="pic"><a href="/playlist/ZHZudm5jY3h4Yw.html" target="_mp3"
+                            title="短视频DJ热门歌曲｜网红BGM"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/25/94/1725873340689_174039025_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZHZudm5jY3h4Yw.html" title="短视频DJ热门歌曲｜网红BGM"
+                        target="_mp3">短视频DJ热门歌曲｜网红BGM</a>
+                </div>
+                <div class="bz-play-item hide-wap">
+                    <div class="pic"><a href="/playlist/ZGNoa2todnNrcw.html" target="_mp3"
+                            title="2026短视频热门歌曲合集【精选】"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/23/76/1768379343889_135259123_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZGNoa2todnNrcw.html" title="2026短视频热门歌曲合集【精选】"
+                        target="_mp3">2026短视频热门歌曲合集【精选】</a>
+                </div>
+                <div class="bz-play-item hide-wap">
+                    <div class="pic"><a href="/playlist/ZGNueHdzeG5uaw.html" target="_mp3"
+                            title="翻唱经典集｜一起重返学生时代"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/98/66/1765771556668_577097598_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZGNueHdzeG5uaw.html" title="翻唱经典集｜一起重返学生时代"
+                        target="_mp3">翻唱经典集｜一起重返学生时代</a>
+                </div>
+                <div class="bz-play-item hide-wap">
+                    <div class="pic"><a href="/playlist/ZHZzY254ZGtkbg.html" target="_mp3"
+                            title="英文流行｜好听又治愈的欧美歌曲"><img
+                                src="https://gimg3.baidu.com/gimg/app=2028&size=f170_130&fmt=auto&src=img1.kuwo.cn/star/userpl2015/25/94/1732692064935_174039025_500.jpg"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="/playlist/ZHZzY254ZGtkbg.html" title="英文流行｜好听又治愈的欧美歌曲"
+                        target="_mp3">英文流行｜好听又治愈的欧美歌曲</a>
+                </div>
             </div>
         </div>
-        <div class="layui-row lkbj pm10">
-            <div class="lktitle">
-                <a href="/list/djwuqu.html" target="_blank">
-                    <h1>流行趋势榜</h1>
-                </a>
-            </div>
-            <div class="ilingkuplay_list">
-                <ul>
-                    {% for song in trending_songs %}
-                    <li>
-                        <div class="name"><a href="{{ song.link }}" target="_mp3" title="{{ song.title }}">{{ song.title }}</a></div>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
+
+        <!-- 五、友情连接 -->
         <div class="layui-row">
             <div class="link">
                 <h2>友情连接</h2>
@@ -164,4 +218,40 @@
 
 
 {% endblock %}
-{% block js %}{% endblock %}
+{% block js %}
+<script>
+// 首页焦点图轮播：自动播放 + 箭头/指示点切换
+(function ($) {
+    var $banner = $('#bzBanner');
+    if (!$banner.length) return;
+    var $track = $banner.find('.bz-banner-track');
+    var $items = $track.find('.bz-banner-item');
+    var count = $items.length;
+    if (count < 2) return;
+    var idx = 0, timer = null;
+    var $dots = $banner.find('.bz-banner-dots');
+
+    // 生成指示点
+    $items.each(function (i) {
+        $dots.append('<i data-i="' + i + '"></i>');
+    });
+
+    function show(i) {
+        idx = (i + count) % count;
+        $track.css('transform', 'translateX(-' + (idx * 100) + '%)');
+        $dots.find('i').removeClass('on').eq(idx).addClass('on');
+    }
+
+    function play() { timer = setInterval(function () { show(idx + 1); }, 4000); }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+    $banner.find('.bz-banner-next').on('click', function () { stop(); show(idx + 1); play(); });
+    $banner.find('.bz-banner-prev').on('click', function () { stop(); show(idx - 1); play(); });
+    $dots.on('click', 'i', function () { stop(); show(+$(this).data('i')); play(); });
+    $banner.on('mouseenter', stop).on('mouseleave', play);
+
+    show(0);
+    play();
+})(jQuery);
+</script>
+{% endblock %}

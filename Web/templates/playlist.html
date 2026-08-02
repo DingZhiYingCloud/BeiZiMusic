@@ -7,38 +7,41 @@
 {% block content %}
 <div class="main">
     <div class="layui-container">
-        <div class="singer_info">
-            <div class="pic">
-                <img src="{{ playlist.pic }}" alt="{{ playlist.title }}">
-                <span class="play"></span>
-            </div>
-            <div class="list_r">
+        <!-- 歌单资料卡（原模块名：歌单信息） -->
+        <div class="bz-singer-info">
+            <div class="pic"><img src="{{ playlist.pic }}" alt="{{ playlist.title }}"></div>
+            <div class="info">
                 <h1>{{ playlist.title }}</h1>
-                <div class="info">
-                    <p style="overflow-y:auto; ">{{ playlist.info }}</p>
-                </div>
+                <p style="overflow-y:auto;">{{ playlist.info }}</p>
             </div>
         </div>
-        <div class="play_list">
-            <div class="title">
-                <h1>歌单歌曲列表</h1>
-                <div class="pagedata">共有<span>{{ total }}</span>首歌曲</div>
+        <!-- 歌单曲目（原模块名：歌单歌曲列表） -->
+        <div class="bz-card bz-gap">
+            <div class="bz-title">
+                <h1>歌单曲目</h1>
+                {% if total %}<div class="pagedata">共 <span>{{ total }}</span> 首</div>{% endif %}
             </div>
-            <ul>
-                {% for song in songs %}
-                <li>
-                    <div class="name"><a href="{{ song.link }}" target="_mp3">{{ song.title }}</a></div>
-                </li>
+            <div class="bz-song-list">
+                <ul>
+                    {% for song in songs %}
+                    <li>
+                        <i class="snum">{{ forloop.counter }}</i>
+                        <div class="sname"><a href="{{ song.link }}" target="_mp3" title="{{ song.title }}">{{ song.title }}</a></div>
+                        <span class="sico"><i class="fa fa-play"></i></span>
+                    </li>
+                    {% empty %}
+                    <div class="bz-empty"><i class="fa fa-music"></i>暂无曲目，请稍后重试</div>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if pagination.links %}
+            <div class="bz-pager">
+                {% for link in pagination.links %}
+                <a class="{{ link.class }}" {% if link.href %}href="{{ link.href }}"{% endif %}>{{ link.text }}</a>
                 {% endfor %}
-            </ul>
+            </div>
+            {% endif %}
         </div>
-        {% if pagination.links %}
-        <div class="page">
-            {% for link in pagination.links %}
-            <a class="{{ link.class }}" {% if link.href %}href="{{ link.href }}"{% endif %}>{{ link.text }}</a>
-            {% endfor %}
-        </div>
-        {% endif %}
     </div>
 </div>
 {% include 'common_html/footer.html' %}

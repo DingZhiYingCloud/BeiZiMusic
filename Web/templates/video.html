@@ -13,40 +13,56 @@
 {% block content %}
 <div class="main">
     <div class="layui-container">
-        <div class="play_left">
-            <div class="title"><h1>{{ title }}</h1></div>
-            <div class="player" id="dplayer"></div>
-        </div>
-        <div class="play_right">
-            {% if singer.name %}
-            <div class="play_singer">
-                <div class="pic"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank"><img src="{{ singer.pic }}" alt="{{ singer.name }}"></a></div>
-                <div class="center">
-                    <div class="name"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">{{ singer.name }}</a></div>
-                    <div class="info">{{ singer.video_count }}</div>
+        <div class="bz-player-wrap">
+            <!-- MV播放主区（原模块名：播放器区域） -->
+            <div class="bz-player-main">
+                <div class="bz-title bz-card-pad" style="border:0;padding:0 0 14px;">
+                    <h1>{{ title }}</h1>
                 </div>
-                <div class="btn"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">查看</a></div>
+                <div class="player" id="dplayer"></div>
             </div>
-            {% endif %}
-            {% if album.name %}
-            <div class="sm">所属专辑：<a href="{{ album.link }}" title="{{ album.name }}" target="_blank">{{ album.name }}</a></div>
-            {% endif %}
-            {% if language_time %}
-            <div class="sm">{{ language_time }}</div>
-            {% endif %}
-            <div class="sm">温馨提示：歌曲来自搜索引擎，本站不做商业用途，不存储任何音频文件，版权属于各音乐门户！</div>
+            <!-- MV信息侧栏（原模块名：MV信息） -->
+            <div class="bz-player-side">
+                {% if singer.name %}
+                <div class="bz-side-card">
+                    <div class="play_singer">
+                        <div class="pic"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank"><img src="{{ singer.pic }}" alt="{{ singer.name }}"></a></div>
+                        <div class="center">
+                            <div class="name"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">{{ singer.name }}</a></div>
+                            <div class="info">{{ singer.video_count }}</div>
+                        </div>
+                        <div class="btn"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">查看</a></div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="bz-side-card">
+                    {% if album.name %}
+                    <div class="sm">所属专辑：<a href="{{ album.link }}" title="{{ album.name }}" target="_blank">{{ album.name }}</a></div>
+                    {% endif %}
+                    {% if language_time %}
+                    <div class="sm">{{ language_time }}</div>
+                    {% endif %}
+                    <div class="sm">温馨提示：歌曲来自搜索引擎，本站不做商业用途，不存储任何音频文件，版权属于各音乐门户！</div>
+                </div>
+            </div>
         </div>
         {% if daily_recommend %}
-        <div class="play_list">
-            <div class="title"><h1>每日推荐</h1></div>
-            <ul>
-                {% for item in daily_recommend %}
-                <li>
-                    <div class="name"><a href="{{ item.link }}" target="_mp3">{{ item.title }}</a></div>
-                    {% if item.mv_link %}<div class="mv"><a href="{{ item.mv_link }}" target="_mv">mv</a></div>{% endif %}
-                </li>
-                {% endfor %}
-            </ul>
+        <!-- 每日推荐（原模块名：每日推荐） -->
+        <div class="bz-card bz-gap">
+            <div class="bz-title">
+                <h1>每日好歌</h1>
+            </div>
+            <div class="bz-song-list">
+                <ul>
+                    {% for item in daily_recommend %}
+                    <li>
+                        <i class="snum">{{ forloop.counter }}</i>
+                        <div class="sname"><a href="{{ item.link }}" target="_mp3" title="{{ item.title }}">{{ item.title }}</a></div>
+                        {% if item.mv_link %}<span class="sico"><a href="{{ item.mv_link }}" target="_mv"><i class="fa fa-video-camera"></i></a></span>{% else %}<span class="sico"><i class="fa fa-play"></i></span>{% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
         {% endif %}
     </div>
@@ -59,7 +75,7 @@
 const dp = new DPlayer({
     container: document.getElementById('dplayer'),
     autoplay: true,
-    theme: '#3fa6fc',
+    theme: '#1677ff',
     loop: true,
     allowfullscreen: true,
     video: {

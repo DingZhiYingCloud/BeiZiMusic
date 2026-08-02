@@ -7,29 +7,37 @@
 {% block content %}
 <div class="main">
     <div class="layui-container">
-        {% for filter in filters %}
-        <div class="ilingku_fl">
-            <li>{{ filter.label }}</li>
-            {% for option in filter.options %}
-            <li><a href="{{ option.link }}" {% if option.current %}class="current"{% endif %}>{{ option.title }}</a></li>
+        <!-- 歌单分类筛选条（原模块名：歌单分类筛选） -->
+        <div class="bz-filter">
+            {% for filter in filters %}
+            <li>
+                <span>{{ filter.label }}</span>
+                {% for option in filter.options %}
+                <a href="{{ option.link }}" {% if option.current %}class="current"{% endif %}>{{ option.title }}</a>
+                {% endfor %}
+            </li>
             {% endfor %}
         </div>
-        {% endfor %}
-        <div class="video_list">
-            <div class="title">
+        <!-- 歌单网格（原列表名：最新歌单歌单列表） -->
+        <div class="bz-card bz-gap">
+            <div class="bz-title">
                 <h1>{{ title }}</h1>
-                {% if total %}<div class="pagedata">共有：<span>{{ total }}</span>个歌单</div>{% endif %}
+                {% if total %}<div class="pagedata">共有 <span>{{ total }}</span> 个歌单</div>{% endif %}
             </div>
-            <ul class="play">
+            <div class="bz-playlists">
                 {% for playlist in playlists %}
-                <li>
-                    <div class="pic"><a href="{{ playlist.link }}" target="_blank"><img src="{{ playlist.pic }}" alt="{{ playlist.title }}"></a></div>
-                    <div class="name"><a href="{{ playlist.link }}" title="{{ playlist.title }}" target="_blank">{{ playlist.title }}</a></div>
-                </li>
+                <div class="bz-play-item">
+                    <div class="pic"><a href="{{ playlist.link }}" target="_blank" title="{{ playlist.title }}"><img src="{{ playlist.pic }}" alt="{{ playlist.title }}"></a>
+                        <span class="play-ico"><i class="fa fa-play"></i></span>
+                    </div>
+                    <a class="name" href="{{ playlist.link }}" title="{{ playlist.title }}" target="_blank">{{ playlist.title }}</a>
+                </div>
+                {% empty %}
+                <div class="bz-empty"><i class="fa fa-music"></i>暂无歌单数据，请稍后重试</div>
                 {% endfor %}
-            </ul>
+            </div>
             {% if pagination.links %}
-            <div class="page">
+            <div class="bz-pager">
                 {% for link in pagination.links %}
                 <a class="{{ link.class }}" {% if link.href %}href="{{ link.href }}"{% endif %}>{{ link.text }}</a>
                 {% endfor %}

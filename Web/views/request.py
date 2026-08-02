@@ -3,6 +3,63 @@ from django.shortcuts import render
 from SpiderServices.Music_2t58.main import Music2t58Spider
 
 
+# ============ 榜单名称映射（原名称 → 本站文艺风新名称） ============
+# 说明：为规避与源站（2t58.com）的名称雷同，将源站榜单/列表名称统一替换为本站
+# 名称。右侧注释保留源站原名，方便后续开发者对照定位。
+RENAME_MAP = {
+    # —— 榜单页热榜合集（原：热门榜单侧栏 33 项）——
+    'DJ舞曲大全': '律动电音集',
+    '音乐热评榜': '乐评精选榜',
+    '音乐先锋榜': '先锋新势力',
+    '爱听电音榜': '幻彩电音榜',
+    '车载歌曲榜': '旅途音乐榜',
+    '英国排行榜': '英伦之声榜',
+    '韩国排行榜': '韩流风尚榜',
+    '日本排行榜': '和风旋律榜',
+    '快手热歌榜': '短视频热歌榜',
+    '抖音热歌榜': '抖音爆款榜',
+    '酷我原创榜': '原创力量榜',
+    'ACG新歌榜': '动漫新曲榜',
+    '酷我飙升榜': '酷炫上升榜',
+    '电音热歌榜': '电音浪潮榜',
+    '综艺新歌榜': '综艺新声榜',
+    '说唱先锋榜': '说唱前沿榜',
+    '影视金曲榜': '影视原声榜',
+    '粤语金曲榜': '粤语经典榜',
+    '欧美金曲榜': '欧美流行榜',
+    '80后热歌榜': '怀旧八零榜',
+    '网红新歌榜': '网红新势力',
+    '古风音乐榜': '古韵雅音榜',
+    '夏日畅爽榜': '夏日清凉榜',
+    '会员喜爱榜': '人气甄选榜',
+    '跑步健身榜': '燃动健身榜',
+    '宝宝哄睡榜': '安睡摇篮榜',
+    '睡前放松榜': '夜色舒缓榜',
+    '熬夜修仙榜': '夜猫陪伴榜',
+    'Vlog必备榜': 'Vlog标配榜',
+    'KTV点唱榜': 'KTV欢唱榜',
+    '通勤路上榜': '通勤随身榜',
+    '网络红歌榜': '网络热歌榜',
+    '网络最新榜': '网际新声榜',
+    # —— 列表页标题 ——
+    '全部歌手列表': '歌手大全',          # 原：全部歌手列表
+    '最新歌单歌单列表': '歌单精选',       # 原：最新歌单歌单列表
+    'MV视频列表': '映像MV大全',          # 原：MV视频列表
+}
+
+# 榜单页大标题兜底（原榜单名：new=新歌榜 / top=TOP榜单 / djwuqu=DJ舞曲大全）
+CHART_ID_TITLES = {
+    'new': '新声速递',
+    'top': '巅峰热榜',
+    'djwuqu': '律动电音集',
+}
+
+
+def rename_title(title):
+    """将源站榜单/列表名称映射为本站名称，未命中时原样返回"""
+    return RENAME_MAP.get(title, title)
+
+
 def index(request):
     # 调用爬虫获取首页三大板块数据；抓取失败时降级为空数据，保证页面可访问
     try:
@@ -59,11 +116,20 @@ def chart(request, chart='new', page=1):
         data = Music2t58Spider().fetch_chart(chart, page)
     except Exception:
         data = {
-            'title': '新歌榜',
+            'title': '新声速递',        # 原：新歌榜
             'songs': [],
             'pagination': {'links': []},
             'hot_rankings': [],
         }
+    # 热榜合集名称映射（规避源站榜单名）
+    for item in data.get('hot_rankings', []):
+        item['title'] = rename_title(item['title'])
+    # 页面大标题：优先取当前榜单映射名，否则按 chart 标识兜底（<title> 仍保留源站 SEO 长句）
+    page_title = next(
+        (item['title'] for item in data.get('hot_rankings', []) if item.get('current')),
+        None
+    )
+    data['page_title'] = page_title or CHART_ID_TITLES.get(chart, '热歌榜')
     return render(request, 'new_songs.html', data)
 
 
@@ -73,11 +139,12 @@ def singer_list(request, area='index', gender='index', style='index', letter='in
         data = Music2t58Spider().fetch_singer_list(area, gender, style, letter, page)
     except Exception:
         data = {
-            'title': '歌手列表',
+            'title': '歌手大全',        # 原：全部歌手列表
             'singers': [],
             'filters': [],
             'pagination': {'links': []},
         }
+    data['title'] = rename_title(data.get('title', ''))
     return render(request, 'singer_list.html', data)
 
 
@@ -87,12 +154,13 @@ def playtype_list(request, playtype='index', page=1):
         data = Music2t58Spider().fetch_playtype_list(playtype, page)
     except Exception:
         data = {
-            'title': '歌单列表',
+            'title': '歌单精选',        # 原：最新歌单歌单列表
             'total': '',
             'playlists': [],
             'filters': [],
             'pagination': {'links': []},
         }
+    data['title'] = rename_title(data.get('title', ''))
     return render(request, 'playtype_list.html', data)
 
 
@@ -102,12 +170,13 @@ def mvlist(request, mvtype='index', page=1):
         data = Music2t58Spider().fetch_mvlist(mvtype, page)
     except Exception:
         data = {
-            'title': 'MV视频列表',
+            'title': '映像MV大全',      # 原：MV视频列表
             'total': '',
             'videos': [],
             'filters': [],
             'pagination': {'links': []},
         }
+    data['title'] = rename_title(data.get('title', ''))
     return render(request, 'mvlist.html', data)
 
 

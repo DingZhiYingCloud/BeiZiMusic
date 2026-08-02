@@ -1,5 +1,108 @@
-// ===== $.lrc 歌词同步滚动插件（提取自源站 play.js，配合 jPlayer timeupdate 驱动高亮滚动）=====
-(function(a){a.lrc={handle:null,list:[],regex:/^[^\[]*((?:\s*\[\d+\:\d+(?:\.\d+)?\])+)([\s\S]*)$/,regex_time:/\[(\d+)\:((?:\d+)(?:\.\d+)?)\]/g,regex_trim:/^\s+|\s+$/,callback:null,interval:0.3,format:"<li>{html}</li>",prefixid:"lrc",hoverClass:"hover",hoverTop:30,duration:0,__duration:-1,start:function(b,g){if(typeof(b)!="string"||b.length<1||typeof(g)!="function"){return}this.stop();this.callback=g;var f=null,e=null,d="";b=b.split("\n");for(var c=0;c<b.length;c++){f=b[c].replace(this.regex_trim,"");if(f.length<1||!(f=this.regex.exec(f))){continue}while(e=this.regex_time.exec(f[1])){this.list.push([parseFloat(e[1])*60+parseFloat(e[2]),f[2]])}this.regex_time.lastIndex=0}if(this.list.length>0){this.list.sort(function(i,h){return i[0]-h[0]});if(this.list[0][0]>=0.1){this.list.unshift([this.list[0][0]-0.1,""])}this.list.push([this.list[this.list.length-1][0]+1,""]);for(var c=0;c<this.list.length;c++){d+=this.format.replace(/\{html\}/gi,this.list[c][1])}a("#"+this.prefixid+"_list").html(d).animate({marginTop:0},100).show();a("#"+this.prefixid+"_nofound").hide();this.handle=setInterval("$.lrc.jump($.lrc.callback());",this.interval*1000)}else{a("#"+this.prefixid+"_list").hide();a("#"+this.prefixid+"_nofound").show();a("#play_geci").hide();a("#lrc_content").show()}},jump:function(e){if(typeof(this.handle)!="number"||typeof(e)!="number"||!a.isArray(this.list)||this.list.length<1){return this.stop()}if(e<0){e=0}if(this.__duration==e){return}e+=0.2;this.__duration=e;e+=this.interval;var d=0,b=this.list.length-1,c=b;pivot=Math.floor(b/2),tmpobj=null,tmp=0,thisobj=this;while(d<=pivot&&pivot<=b){if(this.list[pivot][0]<=e&&(pivot==b||e<this.list[pivot+1][0])){break}else{if(this.list[pivot][0]>e){b=pivot}else{d=pivot}}tmp=d+Math.floor((b-d)/2);if(tmp==pivot){break}pivot=tmp}if(pivot==this.pivot){return}this.pivot=pivot;tmpobj=a("#"+this.prefixid+"_list").children().removeClass(this.hoverClass).eq(pivot).addClass(thisobj.hoverClass);tmp=tmpobj.next().offset().top-tmpobj.parent().offset().top-this.hoverTop;tmp=tmp>0?tmp*-1:0;this.animata(tmpobj.parent()[0]).animate({marginTop:tmp+"px"},this.interval*1000)},stop:function(){if(typeof(this.handle)=="number"){clearInterval(this.handle)}this.handle=this.callback=null;this.__duration=-1;this.regex_time.lastIndex=0;this.list=[]},animata:function(c){var d=j=0,g,e={},b=function(h,f,k,i){return-k*(h/=i)*(h-2)+f};e.execution=function(i,m,h){var k=(new Date()).getTime(),l=h||500,f=parseInt(c.style[i])||0,n=m-f;(function(){var o=(new Date()).getTime()-k;if(o>l){o=l;c.style[i]=b(o,f,n,l)+"px";++d==j&&g&&g.apply(c);return true}c.style[i]=b(o,f,n,l)+"px";setTimeout(arguments.callee,10)})()};e.animate=function(f,k,l){g=l;for(var h in f){j++;e.execution(h,parseInt(f[h]),k)}};return e}}})(jQuery);
+// ===== $.lrc 歌词同步滚动插件（改造自源站插件，核心改动见下）=====
+// 原版用 marginTop 负值强制滚动歌词列表，与用户手动滚动冲突（播放过的歌词无法回看）；
+// 现改为容器 scrollTop 滚动 + 用户滚动时暂停自动跟随（停止滚动 3 秒后恢复），
+// 并为每句歌词注入 data-t 时间戳，支持点击歌词跳转播放到对应时间。
+(function($) {
+    var geciTimer = null;
+    // 监听用户滚动歌词区（滚轮/触摸），滚动期间暂停自动跟随
+    function bindUserScroll() {
+        var box = document.getElementById('play_geci');
+        if (!box || box.__lrcBound) return;
+        box.__lrcBound = true;
+        var mark = function() {
+            $.lrc.userScrolling = true;
+            clearTimeout(geciTimer);
+            geciTimer = setTimeout(function() { $.lrc.userScrolling = false; }, 3000);
+        };
+        box.addEventListener('wheel', mark, { passive: true });
+        box.addEventListener('touchstart', mark, { passive: true });
+        box.addEventListener('touchmove', mark, { passive: true });
+    }
+    $.lrc = {
+        handle: null, list: [], callback: null, interval: 0.3,
+        prefixid: 'lrc', hoverClass: 'hover', hoverTop: 34,
+        pivot: -1, userScrolling: false,
+        // 解析 lrc 文本并渲染歌词；cb 为回调，返回当前播放秒数
+        start: function(text, cb) {
+            if (typeof text != 'string' || text.length < 1 || typeof cb != 'function') return;
+            this.stop();
+            this.callback = cb;
+            this.list = [];
+            var re = /^[^\[]*((?:\s*\[\d+:\d+(?:\.\d+)?\])+)([\s\S]*)$/;
+            var reT = /\[(\d+):((?:\d+)(?:\.\d+)?)\]/g;
+            text.split('\n').forEach(function(line) {
+                line = line.replace(/^\s+|\s+$/g, '');
+                if (!line) return;
+                var m = re.exec(line);
+                if (!m) return;
+                var tm;
+                reT.lastIndex = 0;
+                while ((tm = reT.exec(m[1]))) {
+                    this.list.push([parseFloat(tm[1]) * 60 + parseFloat(tm[2]), m[2]]);
+                }
+            }, this);
+            var ul = $('#' + this.prefixid + '_list');
+            if (this.list.length > 0) {
+                this.list.sort(function(x, y) { return x[0] - y[0]; });
+                if (this.list[0][0] >= 0.1) this.list.unshift([this.list[0][0] - 0.1, '']);
+                this.list.push([this.list[this.list.length - 1][0] + 1, '']);
+                var html = '';
+                for (var i = 0; i < this.list.length; i++) {
+                    html += '<li data-t="' + this.list[i][0] + '">' + this.list[i][1] + '</li>';
+                }
+                ul.html(html).show();
+                $('#lrc_nofound').hide();
+                $('#play_geci').show();
+                $('#lrc_content').hide();
+                this.pivot = -1;
+                bindUserScroll();
+                this.handle = setInterval('$.lrc.jump($.lrc.callback());', this.interval * 1000);
+            } else {
+                ul.hide();
+                $('#lrc_nofound').show();
+                $('#play_geci').hide();
+                $('#lrc_content').show();
+            }
+        },
+        // 根据当前播放秒数滚动并高亮对应歌词
+        jump: function(e) {
+            if (typeof this.handle != 'number' || typeof e != 'number' || this.list.length < 1) return this.stop();
+            if (e < 0) e = 0;
+            e += 0.2 + this.interval;
+            // 二分查找当前时间对应的歌词索引
+            var lo = 0, hi = this.list.length - 1, pivot = 0;
+            while (lo <= hi) {
+                var mid = (lo + hi) >> 1;
+                if (this.list[mid][0] <= e) { pivot = mid; lo = mid + 1; }
+                else hi = mid - 1;
+            }
+            if (pivot == this.pivot) return;
+            this.pivot = pivot;
+            var li = $('#' + this.prefixid + '_list').children().removeClass(this.hoverClass).eq(pivot).addClass(this.hoverClass);
+            if (this.userScrolling) return; // 用户手动滚动查看时暂停自动滚动
+            var box = document.getElementById('play_geci');
+            if (!box) return;
+            // 容器 scrollTop 定位到当前句（距可视区顶部 hoverTop 像素）
+            var target = li.offset().top - li.parent().offset().top - this.hoverTop;
+            if (target < 0) target = 0;
+            box.scrollTop = target;
+        },
+        stop: function() {
+            if (typeof this.handle == 'number') clearInterval(this.handle);
+            this.handle = this.callback = null;
+            this.pivot = -1;
+            this.list = [];
+        }
+    };
+    // 点击歌词跳转播放到对应时间（并恢复自动跟随）
+    $(document).on('click', '#lrc_list li', function() {
+        var t = parseFloat($(this).attr('data-t'));
+        if (!isNaN(t) && t >= 0) {
+            $.lrc.userScrolling = false;
+            $('#player').jPlayer('play', t);
+        }
+    });
+})(jQuery);
 
 // 预初始化 layer 模块（common.js 搜索提示等依赖 window.layer）
 layui.use(['layer'], function(){ window.layer = layui.layer; });

@@ -8,28 +8,36 @@
 <div class="main">
     <div class="layui-container">
         {% if hot_rankings %}
-        <div class="ilingku_fl">
-            <div class="title"><h1>热门榜单</h1></div>
-            {% for item in hot_rankings %}
-            <li><a href="{{ item.link }}" {% if item.current %}class="current"{% endif %}>{{ item.title }}</a></li>
-            {% endfor %}
+        <!-- 热榜合集（原模块名：热门榜单） -->
+        <div class="bz-filter">
+            <li>
+                <span>榜单合辑</span>
+                {% for item in hot_rankings %}
+                <a href="{{ item.link }}" {% if item.current %}class="current"{% endif %}>{{ item.title }}</a>
+                {% endfor %}
+            </li>
         </div>
         {% endif %}
-        <div class="layui-row lkbj pm10">
-            <div class="lktitle">
-                <h1>{{ title }}</h1>
+        <!-- 榜单歌曲列表（标题由后端映射：{{ page_title }}） -->
+        <div class="bz-card bz-gap">
+            <div class="bz-title">
+                <h1>{{ page_title }}</h1>
             </div>
-            <div class="play_list">
+            <div class="bz-song-list">
                 <ul>
                     {% for song in songs %}
                     <li>
-                        <div class="name"><a href="{{ song.link }}" target="_mp3">{{ song.title }}</a></div>
+                        <i class="snum">{{ forloop.counter }}</i>
+                        <div class="sname"><a href="{{ song.link }}" target="_mp3" title="{{ song.title }}">{{ song.title }}</a></div>
+                        <span class="sico"><i class="fa fa-play"></i></span>
                     </li>
+                    {% empty %}
+                    <div class="bz-empty"><i class="fa fa-music"></i>暂无榜单数据，请稍后重试</div>
                     {% endfor %}
                 </ul>
             </div>
             {% if pagination.links %}
-            <div class="page">
+            <div class="bz-pager">
                 {% for link in pagination.links %}
                 <a class="{{ link.class }}" {% if link.href %}href="{{ link.href }}"{% endif %}>{{ link.text }}</a>
                 {% endfor %}
