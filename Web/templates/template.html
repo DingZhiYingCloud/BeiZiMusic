@@ -12,8 +12,42 @@
     <title>{% block title %}杯子音乐网(bezimusic.Com)音乐下载|Mp3歌曲免费下载|DJ舞曲|免费音乐网|歌词下载{% endblock %}</title>
     <meta name="keywords" content="{% block keywords %}杯子音乐网,Mp3歌曲免费下载,DJ舞曲,免费音乐下载,免费音乐网,歌词下载,mp3下载,音乐免费下载,MP4下载,视频下载,DJ舞曲{% endblock %}" />
     <meta name="description" content="{% block description %}杯子音乐网（www.bezimusic.com）Mp3歌曲免费下载,DJ舞曲下载,MP3免费下载,音乐免费下载,mp3歌曲免费下载,mp3下载,音乐免费下载,MP4下载,视频下载,DJ舞曲排行,网络音乐排行,网络热门歌曲,网络歌曲,经典老歌,搞笑歌曲,儿童歌曲,英文歌曲等。收录了网上最新歌曲和流行音乐,网络歌曲,好听的歌,经典老歌,搞笑歌曲,儿童歌曲,英文歌曲。是您寻找好听的歌首选的免费音乐网。{% endblock %}" />
+    <!-- 搜索引擎爬虫：允许收录与跟随链接 -->
+    <meta name="robots" content="index, follow" />
+    <!-- 规范链接：声明当前页面唯一权威地址，避免重复内容（分页/参数等）被拆分收录 -->
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}" />
+    <!-- 移动端浏览器主题色 -->
+    <meta name="theme-color" content="#1677ff" />
     <link rel="shortcut icon" href="/media/favicon.ico">
     <link rel="bookmark" href="/media/favicon.ico">
+    <!-- Open Graph 协议：社交平台（微信/QQ/微博等）分享时生成卡片，各页面可覆盖 block 定制 -->
+    <meta property="og:site_name" content="杯子音乐网" />
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}" />
+    <meta property="og:title" content="{% block og_title %}杯子音乐网(bezimusic.Com)音乐下载|Mp3歌曲免费下载|DJ舞曲|免费音乐网|歌词下载{% endblock %}" />
+    <meta property="og:description" content="{% block og_description %}杯子音乐网（www.bezimusic.com）Mp3歌曲免费下载,DJ舞曲下载,音乐免费下载,免费音乐网,歌词下载。收录最新歌曲和流行音乐,是您寻找好听的歌首选的免费音乐网。{% endblock %}" />
+    <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}" />
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}/static/images/logo.png{% endblock %}" />
+    <meta property="og:locale" content="zh_CN" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{% block twitter_title %}杯子音乐网(bezimusic.Com)音乐下载|Mp3歌曲免费下载|DJ舞曲|免费音乐网|歌词下载{% endblock %}" />
+    <meta name="twitter:description" content="{% block twitter_description %}杯子音乐网（www.bezimusic.com）Mp3歌曲免费下载,DJ舞曲下载,音乐免费下载,免费音乐网,歌词下载。收录最新歌曲和流行音乐,是您寻找好听的歌首选的免费音乐网。{% endblock %}" />
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}/static/images/logo.png{% endblock %}" />
+    <!-- 结构化数据（schema.org）：声明站点信息与站内搜索，助力搜索引擎理解网站 -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "杯子音乐网",
+        "url": "{{ request.scheme }}://{{ request.get_host }}/",
+        "description": "免费音乐下载网站，提供Mp3歌曲免费下载、DJ舞曲下载、歌词下载、MV视频在线观看。",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ request.scheme }}://{{ request.get_host }}/so/{search_term_string}.html",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
     <link rel="stylesheet" href="/static/css/base.css?v=v2.4" />
     <link rel="stylesheet" href="/static/layui/css/layui.min.css">
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
