@@ -208,8 +208,8 @@ footer .layui-container span {display:block;margin-bottom:5px;}
 .title .pagedata{float:right;height:30px;font-size:15px;line-height:30px;color:#666;margin-top:10px;margin-right:20px;}
 .title .pagedata span{color:red;margin:0 3px;}
 .lktitle{float:left;width:100%;height:40px;overflow:hidden;}
-.lktitle h1,.lktitle h2{float: left;height: 40px;font-size: 17px;line-height: 46px;color: #333;text-indent: 12px;position: relative;margin-left: 15px;}
-.lktitle h1:after,.lktitle h2:after{content:"";display:inline-block;position:absolute;top:13px;left:0;width:5px;height:19px;border-radius:5px;background:#1677ff;}
+.lktitle h1,.lktitle h2{float: left;height: 40px;font-size: 17px;line-height: 40px;color: #333;text-indent: 12px;position: relative;margin-left: 15px;}
+.lktitle h1:after,.lktitle h2:after{content:"";display:inline-block;position:absolute;top:10px;left:0;width:5px;height:19px;border-radius:5px;background:#1677ff;}
 .lktitle .pagedata{float:right;height:30px;font-size:15px;line-height:30px;color:#666;margin-top:10px;margin-right:15px;}
 .lktitle .pagedata span{color:red;margin:0 3px;}
 .lktitle .more{float:right;height:40px;line-height:40px;margin-right:15px;font-size:13px;color:#999;}
@@ -476,9 +476,6 @@ footer .layui-container span {display:block;margin-bottom:5px;}
 @media screen and (max-width:750px) { .error-code { font-size:60px; } .error-page h1 { font-size:18px; } }
 
 /* ============ 首页新版布局（Banner轮播 + 模块重排） ============ */
-/* 页面主标题（SEO：全页唯一 h1，左蓝竖条风格与模块标题一致） */
-.bz-home-title { margin:15px 0 0; font-size:22px; color:#333; padding-left:12px; position:relative; line-height:1.2; }
-.bz-home-title:after { content:""; position:absolute; top:4px; left:0; width:4px; height:18px; border-radius:2px; background:#1677ff; }
 /* 一、焦点图轮播 */
 .bz-banner { position:relative; margin-top:10px; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(22,119,255,.14); background:#fff; }
 .bz-banner-track { display:flex; transition:transform .6s ease; }
