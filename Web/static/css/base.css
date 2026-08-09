@@ -476,9 +476,9 @@ footer .layui-container span {display:block;margin-bottom:5px;}
 @media screen and (max-width:750px) { .error-code { font-size:60px; } .error-page h1 { font-size:18px; } }
 
 /* ============ 首页新版布局（Banner轮播 + 模块重排） ============ */
-/* 页面主标题（SEO：全页唯一 h1，左蓝竖条风格与模块标题一致） */
-.bz-home-title { margin:15px 0 0; font-size:22px; color:#333; padding-left:12px; position:relative; line-height:1.2; }
-.bz-home-title:after { content:""; position:absolute; top:4px; left:0; width:4px; height:18px; border-radius:2px; background:#1677ff; }
+/* 页面主标题（SEO：全页唯一 h1，品牌蓝加粗 + 渐变竖条装饰） */
+.bz-home-title { margin:20px 0 14px; font-size:26px; font-weight:700; color:#1677ff; padding-left:14px; position:relative; line-height:1.25; letter-spacing:1px; }
+.bz-home-title:after { content:""; position:absolute; top:5px; left:0; width:5px; height:24px; border-radius:3px; background:linear-gradient(180deg,#1677ff,#69b1ff); }
 /* 一、焦点图轮播 */
 .bz-banner { position:relative; margin-top:10px; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(22,119,255,.14); background:#fff; }
 .bz-banner-track { display:flex; transition:transform .6s ease; }
@@ -497,6 +497,10 @@ footer .layui-container span {display:block;margin-bottom:5px;}
 .bz-banner-dots { position:absolute; left:0; right:0; bottom:16px; text-align:center; }
 .bz-banner-dots i { display:inline-block; width:22px; height:5px; margin:0 4px; border-radius:3px; background:rgba(255,255,255,.45); cursor:pointer; transition:background .3s, width .3s; }
 .bz-banner-dots i.on { width:34px; background:#1677ff; }
+/* 网站介绍文字（首页 SEO 内容区） */
+.bz-seo-text { margin-top:20px; padding:16px 18px; background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.05); }
+.bz-seo-text h2 { font-size:16px; color:#333; margin-bottom:8px; padding-left:10px; border-left:4px solid #1677ff; line-height:1.4; }
+.bz-seo-text p { font-size:13px; color:#666; line-height:1.9; margin:0; }
 
 /* 二、热门歌手（圆形头像卡片） */
 .bz-block { border-radius:12px; overflow:hidden; margin-top:15px; }

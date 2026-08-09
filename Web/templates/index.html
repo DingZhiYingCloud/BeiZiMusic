@@ -1,14 +1,14 @@
 {% extends 'template.html' %}
 
-{% block title %}杯子音乐网 - 免费音乐在线试听 - 爱听音乐网{% endblock %}
-{% block keywords %}杯子音乐网,爱听音乐网,免费音乐,免费音乐网,免费音乐下载,MP3免费下载,Mp3歌曲免费下载,DJ舞曲,网络热门歌曲,经典老歌,歌词下载,mp3下载{% endblock %}
-{% block description %}爱听音乐网（杯子音乐网www.bezimusic.com）免费音乐在线试听下载网站,提供Mp3歌曲免费下载,DJ舞曲下载,网络热门歌曲,经典老歌,英文歌曲,网络歌曲,好听的歌,流行音乐等。收录最新歌曲和流行音乐,是您寻找好听的歌首选的免费音乐网。{% endblock %}
+{% block title %}免费音乐在线试听 - 在线听歌不用下载 - 爱听音乐网|杯子音乐网{% endblock %}
+{% block keywords %}杯子音乐网,爱听音乐网,免费音乐,免费音乐网,在线听音乐,免费听歌,在线听歌,音乐在线播放,在线听歌网站,免登录听歌,无需注册听歌,不用下载的音乐网站,免费音乐在线听,免费音乐下载,MP3免费下载,Mp3歌曲免费下载,DJ舞曲,网络热门歌曲,经典老歌,歌词下载,mp3下载{% endblock %}
+{% block description %}爱听音乐网（杯子音乐网）免费音乐在线试听网站,无需下载音乐软件、无需注册登录、无需付费,打开网页即可在线听完整歌曲。提供Mp3歌曲免费下载、DJ舞曲下载、歌词同步、MV视频在线观看,收录流行音乐、经典老歌、英文歌曲、网络热门歌曲等海量免费音乐。{% endblock %}
 
 {% block content %}
 <div class="main">
     <div class="layui-container">
-        <!-- 页面主标题（SEO：全页唯一 h1，融入核心关键词"免费音乐"） -->
-        <h1 class="bz-home-title">杯子音乐网 - 免费音乐在线试听</h1>
+        <!-- 页面主标题（SEO：全页唯一 h1，与顶部 logo 区分，保留核心关键词） -->
+        <h1 class="bz-home-title">免费音乐在线试听</h1>
         <!-- 一、焦点图轮播（推荐歌单封面） -->
         <div class="bz-banner" id="bzBanner">
             <div class="bz-banner-track">
@@ -204,20 +204,14 @@
             </div>
         </div>
 
-        <!-- 五、友情连接 -->
-        <div class="layui-row">
-            <div class="link">
-                <h2>友情连接</h2>
-                <div>
-                </div>
-            </div>
+        <!-- 五、网站介绍（SEO 内容区：自然描述网站服务，覆盖"在线听歌/免登录/免下载"搜索意图） -->
+        <div class="bz-seo-text">
+            <h2>免费音乐在线听，无需下载音乐软件</h2>
+            <p>爱听音乐网（杯子音乐网）是一个免费音乐在线试听网站，无需注册登录、无需下载任何音乐软件、无需付费，打开网页即可在线听完整歌曲。网站收录流行音乐、经典老歌、DJ舞曲、英文歌曲、网络热门歌曲等海量免费音乐，支持歌词同步显示与MV高清在线观看，随时随地想听就听，是你免费在线听歌的好选择。</p>
         </div>
     </div>
 </div>
 {% include 'common_html/footer.html' %}
-
-
-
 
 {% endblock %}
 {% block js %}
