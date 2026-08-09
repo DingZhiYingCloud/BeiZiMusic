@@ -5,11 +5,13 @@ from django.urls import path, include, re_path
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
 from django.views.static import serve
+from Web.views import request as bz_request
 
 urlpatterns = [
     # path('admin/', admin.site.urls), # 管理员站点
     path('', include('Web.views.urls')), # 前端路由
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+    path('sitemap.xml', bz_request.sitemap, name='sitemap'),
 ]
 
 # 自定义错误页处理（DEBUG=False 时生效）
