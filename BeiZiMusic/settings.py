@@ -53,6 +53,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Web.services.friend_links.friend_links', # 小影 API 友情链接（后端拉取+1小时缓存，渲染进HTML供搜索引擎可见）
             ],
         },
     },

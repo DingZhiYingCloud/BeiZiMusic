@@ -1,0 +1,13 @@
+## 如何使用
+站点采集(site-collector)完成后,想要做全站 SEO 更新时,只需说类似:
+ "对整个网站做一次 SEO 更新,把全部外部链接替换成小影 API 的友情链接"
+AI 会自动触发 seo-updater skill,按"分析→和你确认方案→实施"的流程执行,不会跳过沟通直接写代码。
+
+## 前置准备
+1. 先把最新的小影 API 基础地址写入 `.env` 的 `XIAOYING_API_BASE`
+2. 外链替换默认关闭,确认方案后如需立即生效,把 `.env` 的 `FRIEND_LINK_REPLACE` 改为 `on`
+
+## 本 skill 包含的三大模块
+1. 外链替换:全站 `<a>` 外链运行时替换为小影 API 友情链接(中间件,默认 off,自动识别本站域名)
+2. 动态 SEO:title/keywords/description 按站点主题定制热词+长尾词,交错排序
+3. sitemap:基于站点数据源自动收集全部 URL 生成 sitemap.xml
