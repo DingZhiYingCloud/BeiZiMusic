@@ -27,10 +27,10 @@
             <div class="bz-playlists">
                 {% for playlist in playlists %}
                 <div class="bz-play-item">
-                    <div class="pic"><a href="{{ playlist.link }}" target="_blank" title="{{ playlist.title }}"><img src="{{ playlist.pic }}" alt="{{ playlist.title }}"></a>
+                    <div class="pic"><a href="{{ playlist.link }}" title="{{ playlist.title }}"><img src="{{ playlist.pic }}" alt="{{ playlist.title }}"></a>
                         <span class="play-ico"><i class="fa fa-play"></i></span>
                     </div>
-                    <a class="name" href="{{ playlist.link }}" title="{{ playlist.title }}" target="_blank">{{ playlist.title }}</a>
+                    <a class="name" href="{{ playlist.link }}" title="{{ playlist.title }}">{{ playlist.title }}</a>
                 </div>
                 {% empty %}
                 <div class="bz-empty"><i class="fa fa-music"></i>暂无歌单数据，请稍后重试</div>

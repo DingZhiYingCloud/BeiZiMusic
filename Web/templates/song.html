@@ -7,57 +7,34 @@
 {% block content %}
 <div class="main">
     <div class="layui-container">
-        <!-- 播放器卡片（100% 重构：封面+歌词在上，控制条在下） -->
+        <!-- 播放器卡片（封面+歌词展示区；播放控制由全局底部悬浮条 m-playbar 接管） -->
         <div class="bz-player-new">
-            {# jPlayer 媒体容器（隐藏，控件由 jp_container_1 承载） #}
-            <div id="player" style="display:block;width:0;height:0;"></div>
-            <div id="jp_container_1" class="bz-pp">
-                <!-- 上部：旋转封面 + 歌词区 -->
-                <div class="bz-pp-top">
-                    <div class="bz-pp-cover">
-                        <div class="djpic">
-                            <img class="rotate" id="mcover" src="{{ song.cover }}" alt="{{ song.name }}">
-                            <div class="state"><span>已暂停</span></div>
-                        </div>
-                        <div class="bz-pp-meta">
-                            <h2 class="bz-pp-name">{{ song.name }}</h2>
-                            <p class="bz-pp-artist">
-                                <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}" target="_blank">{{ song.artists|join:'/' }}</a>
-                            </p>
-                        </div>
+            <div class="bz-pp-top">
+                <div class="bz-pp-cover">
+                    <div class="djpic">
+                        <img class="rotate" id="mcover" src="{{ song.cover }}" alt="{{ song.name }}">
+                        <div class="state"><span>已暂停</span></div>
                     </div>
-                    <div class="bz-pp-lrc">
-                        <div class="bz-pp-lrc-title">歌词</div>
-                        <div class="lrc_geci" id="play_geci">
-                            <ul id="lrc_list"></ul>
-                        </div>
-                        <div class="lrc_nofound" id="lrc_nofound" style="display:none;">暂无歌词，静静欣赏旋律吧</div>
+                    <div class="bz-pp-meta">
+                        <h2 class="bz-pp-name">{{ song.name }}</h2>
+                        <p class="bz-pp-artist">
+                            <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}">{{ song.artists|join:'/' }}</a>
+                        </p>
                     </div>
                 </div>
-                <!-- 下部：播放控制条 -->
-                <div class="bz-pp-bar">
-                    <div class="bz-pp-ctrl">
-                        <a href="javascript:void(0);" class="jp-play" title="播放"><i class="fa fa-play"></i></a>
-                        <a href="javascript:void(0);" class="jp-pause" title="暂停" style="display:none;"><i class="fa fa-pause"></i></a>
+                <div class="bz-pp-lrc">
+                    <div class="bz-pp-lrc-title">歌词</div>
+                    <div class="lrc_geci" id="play_geci">
+                        <ul id="lrc_list"></ul>
                     </div>
-                    <div class="bz-pp-prog">
-                        <div class="jp-progress">
-                            <div class="jp-seek-bar">
-                                <div class="jp-play-bar"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bz-pp-time">
-                        <span class="jp-current-time">00:00</span>
-                        <span class="bz-pp-divider">/</span>
-                        <span class="jp-duration">00:00</span>
-                    </div>
-                    <div class="bz-pp-vol">
-                        <a href="javascript:void(0);" class="jp-mute" title="静音"><i class="fa fa-volume-up"></i></a>
-                        <a href="javascript:void(0);" class="jp-unmute" title="取消静音" style="display:none;"><i class="fa fa-volume-off"></i></a>
-                        <div class="jp-volume-bar"><div class="jp-volume-bar-value" style="width:100%;"></div></div>
-                    </div>
+                    <div class="lrc_nofound" id="lrc_nofound" style="display:none;">暂无歌词，静静欣赏旋律吧</div>
                 </div>
+            </div>
+            <!-- 操作按钮：加入播放列表 / 喜欢 / 下载（控制条在底部悬浮条） -->
+            <div class="bz-pp-acts">
+                <a href="javascript:;" class="bz-pp-btn bz-add" data-sid="{{ sid }}" data-title="{{ song.artists|join:'/' }} - {{ song.name }}"><i class="fa fa-plus"></i> 加入播放列表</a>
+                <a href="javascript:;" class="bz-pp-btn ghost bz-like" data-sid="{{ sid }}" data-title="{{ song.artists|join:'/' }} - {{ song.name }}"><i class="fa fa-heart-o"></i> 喜欢</a>
+                <a href="javascript:;" class="bz-pp-btn ghost" id="bz-btn-download"><i class="fa fa-download"></i> 下载</a>
             </div>
         </div>
 
@@ -66,13 +43,13 @@
             <div class="bz-side-card">
                 <div class="play_singer">
                     <div class="pic">
-                        <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}" target="_blank">
+                        <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}">
                             <img src="{{ song.cover }}" alt="{{ song.name }}">
                         </a>
                     </div>
                     <div class="center">
                         <div class="name">
-                            <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}" target="_blank">{{ song.artists|join:'/' }}</a>
+                            <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}">{{ song.artists|join:'/' }}</a>
                         </div>
                         <div class="info">
                             <a href="{{ song.pack_url|default:'#' }}" target="_blank" style="color:#1677ff;font-weight:bold;">
@@ -81,7 +58,7 @@
                         </div>
                     </div>
                     <div class="btn">
-                        <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}" target="_blank">查看</a>
+                        <a href="{{ song.singer_url|default:'#' }}" title="{{ song.artists|join:'/' }}">查看</a>
                     </div>
                 </div>
             </div>
@@ -101,8 +78,12 @@
                     {% for item in daily_recommend %}
                     <li>
                         <i class="snum">{{ forloop.counter }}</i>
-                        <div class="sname"><a href="{{ item.link }}" target="_mp3" title="{{ item.title }}">{{ item.title }}</a></div>
-                        <span class="sico"><i class="fa fa-play"></i></span>
+                        <div class="sname"><a href="{{ item.link }}" title="{{ item.title }}">{{ item.title }}</a></div>
+                        <span class="sico">
+                            <a href="javascript:;" class="bz-act bz-play-ico" title="播放"><i class="fa fa-play"></i></a>
+                            <a href="javascript:;" class="bz-act bz-add" title="加入播放列表"><i class="fa fa-plus"></i></a>
+                            <a href="javascript:;" class="bz-act bz-like" title="喜欢"><i class="fa fa-heart-o"></i></a>
+                        </span>
                     </li>
                     {% endfor %}
                 </ul>
@@ -115,11 +96,38 @@
 {% endblock %}
 
 {% block js %}
-<script src="/static/js/jplayer.min.js"></script>
-<script src="/static/js/play.js?v=v4"></script>
+<script src="/static/js/play.js?v=v5"></script>
 <script>
+// 本页歌曲完整数据：供全局底部播放条 player.js 使用（无刷新播放/封面/歌词同步）
+window.BZ_PAGE_SONG = {
+    sid: '{{ sid }}',
+    name: '{{ song.name|escapejs }}',
+    artists: '{{ song.artists|join:"/"|escapejs }}',
+    cover: '{{ song.cover|escapejs }}',
+    play_url: '{{ play_url|escapejs }}',
+    lyrics: '{{ lyrics|escapejs }}'
+};
+
 $(function(){
-    initPlayer('{{ play_url|escapejs }}', '{{ song.cover|escapejs }}', '{{ lyrics|escapejs }}');
+    // 下载歌曲：layui layer 弹窗，选择 仅MP3 / 仅歌词 / 两个一起(打包zip)
+    $('#bz-btn-download').on('click', function() {
+        layer.open({
+            type: 1,
+            title: '下载歌曲',
+            area: '340px',
+            content: '<div class="bz-dl-panel">'
+                + '<p><label><input type="radio" name="dl_kind" value="mp3" checked> 仅下载MP3音乐</label></p>'
+                + '<p><label><input type="radio" name="dl_kind" value="lrc"> 仅下载歌词</label></p>'
+                + '<p><label><input type="radio" name="dl_kind" value="all"> 两个一起（MP3+歌词打包）</label></p>'
+                + '</div>',
+            btn: ['开始下载', '取消'],
+            yes: function(index) {
+                var kind = $('input[name="dl_kind"]:checked').val();
+                window.location.href = '/download/{{ sid }}/' + kind + '.html';
+                layer.close(index);
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

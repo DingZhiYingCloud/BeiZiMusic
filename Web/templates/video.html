@@ -26,18 +26,18 @@
                 {% if singer.name %}
                 <div class="bz-side-card">
                     <div class="play_singer">
-                        <div class="pic"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank"><img src="{{ singer.pic }}" alt="{{ singer.name }}"></a></div>
+                        <div class="pic"><a href="{{ singer.link }}" title="{{ singer.name }}"><img src="{{ singer.pic }}" alt="{{ singer.name }}"></a></div>
                         <div class="center">
-                            <div class="name"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">{{ singer.name }}</a></div>
+                            <div class="name"><a href="{{ singer.link }}" title="{{ singer.name }}">{{ singer.name }}</a></div>
                             <div class="info">{{ singer.video_count }}</div>
                         </div>
-                        <div class="btn"><a href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">查看</a></div>
+                        <div class="btn"><a href="{{ singer.link }}" title="{{ singer.name }}">查看</a></div>
                     </div>
                 </div>
                 {% endif %}
                 <div class="bz-side-card">
                     {% if album.name %}
-                    <div class="sm">所属专辑：<a href="{{ album.link }}" title="{{ album.name }}" target="_blank">{{ album.name }}</a></div>
+                    <div class="sm">所属专辑：<a href="{{ album.link }}" title="{{ album.name }}">{{ album.name }}</a></div>
                     {% endif %}
                     {% if language_time %}
                     <div class="sm">{{ language_time }}</div>
@@ -57,8 +57,13 @@
                     {% for item in daily_recommend %}
                     <li>
                         <i class="snum">{{ forloop.counter }}</i>
-                        <div class="sname"><a href="{{ item.link }}" target="_mp3" title="{{ item.title }}">{{ item.title }}</a></div>
-                        {% if item.mv_link %}<span class="sico"><a href="{{ item.mv_link }}" target="_mv"><i class="fa fa-video-camera"></i></a></span>{% else %}<span class="sico"><i class="fa fa-play"></i></span>{% endif %}
+                        <div class="sname"><a href="{{ item.link }}" title="{{ item.title }}">{{ item.title }}</a></div>
+                        <span class="sico">
+                            {% if item.mv_link %}<a href="{{ item.mv_link }}" target="_mv" title="MV"><i class="fa fa-video-camera"></i></a>{% endif %}
+                            <a href="javascript:;" class="bz-act bz-play-ico" title="播放"><i class="fa fa-play"></i></a>
+                            <a href="javascript:;" class="bz-act bz-add" title="加入播放列表"><i class="fa fa-plus"></i></a>
+                            <a href="javascript:;" class="bz-act bz-like" title="喜欢"><i class="fa fa-heart-o"></i></a>
+                        </span>
                     </li>
                     {% endfor %}
                 </ul>

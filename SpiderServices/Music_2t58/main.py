@@ -65,15 +65,23 @@ class Music2t58Spider:
         return html
 
     def _pass_verification(self, url, html):
-        """提交人机验证表单（csrf_token + human_check），返回通过验证后的真实页面 HTML"""
+        """提交人机验证表单（csrf_token + human_check），返回通过验证后的真实页面 HTML
+
+        关键：POST 必须带 Referer + Origin 头，否则服务端返回 200 验证页（不跳转），
+        验证永不生效；带上后返回 302 跳转，requests 自动跟随即拿到真实页面。
+        """
         tree = etree.HTML(html)
         csrf_nodes = tree.xpath('//input[@name="csrf_token"]')
         if not csrf_nodes:
             return html
         csrf_token = csrf_nodes[0].get('value', '')
+        origin = urllib.parse.urlparse(url).scheme + '://' + urllib.parse.urlparse(url).netloc
         # 勾选"我不是人机"并提交，session 自动保存验证状态
-        self.session.post(url, data={'csrf_token': csrf_token, 'human_check': 'on'}, timeout=10)
-        resp = self.session.get(url, timeout=10)
+        resp = self.session.post(url, data={'csrf_token': csrf_token, 'human_check': 'on'},
+                                 headers={'Referer': url, 'Origin': origin}, timeout=10)
+        # 若 POST 跟随后仍是验证页，再 GET 一次兜底
+        if '安全人机验证' in resp.text:
+            resp = self.session.get(url, timeout=10)
         if not resp.encoding or resp.encoding.lower() == 'iso-8859-1':
             resp.encoding = resp.apparent_encoding
         return resp.text
@@ -221,6 +229,23 @@ class Music2t58Spider:
             'play_url': play_info['play_url'],
             'lyrics': lyrics,
             'daily_recommend': daily,
+        }
+
+    def fetch_download(self, sid):
+        """获取歌曲下载所需数据：歌曲信息 / 最新播放链接 / 歌词
+
+        下载时重新请求 play.php 获取直链（页面加载时解密的直链可能已过期），
+        由视图层后端代理该直链，避免源站防盗链与链接时效问题。
+        """
+        url = f'{self.HOME_URL}song/{sid}.html'
+        tree = etree.HTML(self._get_html(url))
+        song_info = self._parse_song_info(tree)
+        play_info = self._fetch_play_info(sid, url)
+        lyrics = self._fetch_lyrics(play_info['cid'])
+        return {
+            'song': song_info,
+            'play_url': play_info['play_url'],
+            'lyrics': lyrics,
         }
 
     def fetch_search(self, keyword, page=1):

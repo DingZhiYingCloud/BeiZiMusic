@@ -9,6 +9,7 @@ urlpatterns = [
     path('singer/<sid>.html', request.singer, name='singer'),
     path('singer/<sid>/<int:page>.html', request.singer, name='singer_page'),
     path('song/<sid>.html', request.song, name='song'),
+    path('api/song/<sid>.json', request.api_song, name='api_song'),
     path('so/<str:keyword>.html', request.search, name='search'),
     path('so/<str:keyword>/<int:page>.html', request.search, name='search_page'),
     path('list/<str:chart>.html', request.chart, name='chart'),
@@ -22,4 +23,5 @@ urlpatterns = [
     path('video/<sid>.html', request.video, name='video'),
     path('playlist/<sid>.html', request.playlist, name='playlist'),
     path('playlist/<sid>/<int:page>.html', request.playlist, name='playlist_page'),
+    path('download/<sid>/<str:kind>.html', request.download, name='download'),
 ]

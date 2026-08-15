@@ -741,6 +741,17 @@ footer .layui-container span {display:block;margin-bottom:5px;}
 .bz-pp-vol .jp-volume-bar-value { height:4px; background:#1677ff; }
 .bz-pp-vol .jp-volume-bar-value:after { top:-3px; right:-4px; width:10px; height:10px;
     background:#fff; border:2px solid #1677ff; }
+/* —— 播放控制条右侧：下载歌曲按钮 —— */
+.bz-pp-dl { display:flex; align-items:center; }
+.bz-pp-dl a { display:flex; align-items:center; justify-content:center; width:40px; height:40px;
+    border-radius:50%; background:#eef2fa; color:#5a6f9c; font-size:15px;
+    transition:color .2s, background .2s, transform .2s; }
+.bz-pp-dl a:hover { background:#1677ff; color:#fff; transform:scale(1.06); }
+/* —— 下载弹窗（layui layer type:1 内容区）—— */
+.bz-dl-panel { padding:22px 28px; }
+.bz-dl-panel p { margin:0 0 14px; font-size:14px; color:#333; }
+.bz-dl-panel p:last-child { margin-bottom:0; }
+.bz-dl-panel input { margin-right:6px; }
 
 /* —— 下方：歌手信息卡 + 温馨提示（原模块名：歌手信息）—— */
 .bz-pp-info { display:flex; gap:15px; margin-top:15px; align-items:stretch; }
@@ -767,4 +778,158 @@ footer .layui-container span {display:block;margin-bottom:5px;}
 .bz-pp-bar { flex-wrap:wrap; gap:12px; padding:12px 14px; }
 .bz-pp-vol { margin-left:auto; }
 .bz-pp-info { flex-direction:column; }
+}
+
+/* ============ 全局底部悬浮播放条（网易云 m-playbar 风格） ============
+   DOM 挂在 template.html，全站固定底部；控制逻辑见 /static/js/player.js。
+   功能：待播放列表（手动加歌）/ 我的喜欢（localStorage）/ 列表循环·随机·单曲循环 /
+   上一首·下一首 / 无刷新切歌（/api/song/<sid>.json）。 */
+/* layui.min.css 会在其后用同级选择器重置 body{padding:0}，故用 html body 提升优先级 */
+html body { padding-bottom:66px; }
+.m-playbar {
+    position:fixed; left:0; right:0; bottom:0; z-index:10000;
+    height:56px; background:rgba(20,22,32,.96);
+    box-shadow:0 -2px 14px rgba(0,0,0,.28); border-top:1px solid rgba(255,255,255,.06);
+}
+.m-playbar-wrap { display:flex; align-items:center; height:56px; padding:0 14px 0 20px; }
+/* 展开/收起小把手（悬浮条顶部中央） */
+.m-playbar-unlock-btn {
+    position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+    width:46px; height:16px; line-height:16px; text-align:center;
+    background:rgba(20,22,32,.96); color:#9a9a9a; font-size:12px;
+    border-radius:8px 8px 0 0; cursor:pointer;
+}
+.m-playbar-unlock-btn:hover { color:#fff; }
+/* —— 左侧：封面 + 歌名/歌手 + 喜欢 —— */
+.m-playbar-left { display:flex; align-items:center; flex-shrink:0; min-width:0; }
+.m-playbar-cover {
+    width:42px; height:42px; border-radius:6px; overflow:hidden; flex-shrink:0; margin-right:10px;
+    background:linear-gradient(135deg,#2b3245,#1a2030); display:flex; align-items:center; justify-content:center;
+    color:#5a6f9c; font-size:18px;
+}
+.m-playbar-cover img { width:100%; height:100%; object-fit:cover; display:block; }
+.m-playbar-info { min-width:0; max-width:180px; margin-right:8px; }
+.m-playbar-name { display:block; color:#fff; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.m-playbar-name:hover { color:#1677ff; }
+.m-playbar-artist { display:block; color:#8b93a7; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.m-playbar-like { background:none; border:0; color:#8b93a7; font-size:16px; cursor:pointer; padding:6px; flex-shrink:0; }
+.m-playbar-like:hover, .m-playbar-like.on { color:#ff3b3b; }
+/* —— 中部：按钮 + 进度条 —— */
+.m-playbar-center { flex:1; min-width:0; display:flex; align-items:center; }
+.m-playbar-btns { display:flex; align-items:center; gap:12px; margin-right:16px; flex-shrink:0; }
+.m-playbar-btns a { color:#d8d8d8; font-size:14px; cursor:pointer; position:relative; transition:color .2s, transform .2s; }
+.m-playbar-btns a:hover { color:#fff; transform:scale(1.12); }
+/* 播放/暂停：display 由 jPlayer 控制（.show/.hide），故用行内块+行高居中而非 flex */
+.m-btn-play, .m-btn-pause {
+    width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.12);
+    text-align:center; line-height:34px; font-size:14px;
+}
+.m-btn-play:hover, .m-btn-pause:hover { background:#1677ff; }
+.m-btn-play i, .m-btn-pause i { padding-left:2px; }
+/* 单曲循环角标 */
+.m-mode-1 {
+    display:none; position:absolute; top:-4px; right:-6px; min-width:14px; height:14px; line-height:14px;
+    padding:0 3px; border-radius:7px; background:#1677ff; color:#fff; font-size:10px; font-style:normal; text-align:center;
+}
+.m-playbar[data-mode="single"] .m-mode-1 { display:block; }
+.m-btn-list { font-size:16px; }
+.m-btn-list:hover { color:#1677ff; }
+/* 进度条（jPlayer 自动绑定点击/拖动） */
+.m-playbar-prog { flex:1; min-width:0; display:flex; align-items:center; gap:10px; }
+.m-playbar-prog .jp-progress { width:100%; height:4px; margin:0; background:rgba(255,255,255,.18); border-radius:2px; cursor:pointer; }
+.m-playbar-prog .jp-seek-bar { width:100%; height:4px; background:transparent; }
+.m-playbar-prog .jp-play-bar { height:4px; background:linear-gradient(90deg,#69b1ff,#1677ff); border-radius:2px; }
+.m-playbar-prog .jp-play-bar:after { content:""; position:absolute; top:-3px; right:-4px; width:10px; height:10px; border-radius:50%; background:#fff; border:2px solid #1677ff; box-shadow:0 0 6px rgba(22,119,255,.5); }
+.m-time { color:#8b93a7; font-size:12px; font-variant-numeric:tabular-nums; flex-shrink:0; }
+/* —— 右侧：音量 —— */
+.m-playbar-right { flex-shrink:0; margin-left:18px; display:flex; align-items:center; }
+.m-playbar-vol { display:flex; align-items:center; gap:8px; }
+.m-playbar-vol a { color:#d8d8d8; font-size:14px; cursor:pointer; }
+.m-playbar-vol a:hover { color:#fff; }
+.m-playbar-vol .jp-volume-bar { width:64px; height:4px; margin:0; background:rgba(255,255,255,.18); border-radius:2px; cursor:pointer; }
+.m-playbar-vol .jp-volume-bar-value { height:4px; background:#1677ff; border-radius:2px; }
+/* 倍速按钮：圆角胶囊；非 1x 时蓝色渐变高亮提示当前档位 */
+.m-playbar-vol .m-btn-rate {
+    font-size:12px; padding:2px 8px; border-radius:10px; user-select:none; line-height:1.4;
+    color:#9aa3b5; border:1px solid rgba(255,255,255,.2);
+    transition:color .2s, border-color .2s, background .2s;
+}
+.m-playbar-vol .m-btn-rate:hover { color:#fff; border-color:#69b1ff; }
+.m-playbar-vol .m-btn-rate.on {
+    color:#fff; border-color:transparent; background:linear-gradient(135deg,#69b1ff,#1677ff);
+    box-shadow:0 2px 8px rgba(22,119,255,.35);
+}
+/* —— 收起状态：仅保留中部控制 —— */
+.m-playbar:not(.m-playbar-unlock) { height:42px; }
+.m-playbar:not(.m-playbar-unlock) .m-playbar-wrap { height:42px; }
+.m-playbar:not(.m-playbar-unlock) .m-playbar-left,
+.m-playbar:not(.m-playbar-unlock) .m-playbar-right { display:none; }
+/* —— 待播放列表 / 我的喜欢 面板 —— */
+.m-playlist {
+    position:absolute; left:50%; bottom:64px; transform:translateX(-50%);
+    width:460px; max-width:96vw; background:rgba(24,26,38,.98);
+    border:1px solid rgba(255,255,255,.06); border-radius:10px;
+    box-shadow:0 -6px 28px rgba(0,0,0,.45); overflow:hidden; z-index:10001;
+}
+.m-playlist-head { display:flex; align-items:center; padding:10px 16px; border-bottom:1px solid rgba(255,255,255,.07); }
+.m-tab { color:#8b93a7; font-size:14px; margin-right:20px; cursor:pointer; padding-bottom:5px; border-bottom:2px solid transparent; }
+.m-tab:hover { color:#fff; }
+.m-tab.active { color:#1677ff; border-bottom-color:#1677ff; }
+.m-playlist-clear { margin-left:auto; color:#777; font-size:12px; cursor:pointer; }
+.m-playlist-clear:hover { color:#ff3b3b; }
+.m-playlist-body { max-height:300px; overflow-y:auto; padding:6px 0; margin:0; list-style:none; }
+.m-pl-item { display:flex; align-items:center; padding:8px 16px; color:#d8d8d8; cursor:pointer; }
+.m-pl-item:hover { background:rgba(255,255,255,.06); }
+.m-pl-cover { width:30px; height:30px; border-radius:4px; overflow:hidden; flex-shrink:0; margin-right:10px; background:#262b3a; display:flex; align-items:center; justify-content:center; color:#5a6f9c; font-size:13px; }
+.m-pl-cover img { width:100%; height:100%; object-fit:cover; }
+.m-pl-name { flex:1; min-width:0; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.m-pl-artist { color:#7d8598; font-style:normal; font-size:12px; margin-left:6px; }
+.m-pl-item.playing .m-pl-name { color:#1677ff; }
+.m-pl-item.playing .m-pl-name:before { content:"♪ "; }
+.m-pl-del { color:#6a7084; font-size:14px; padding:2px 6px; margin-left:8px; flex-shrink:0; }
+.m-pl-del:hover { color:#ff3b3b; }
+.m-pl-empty { text-align:center; color:#6a7084; font-size:13px; padding:30px 0; }
+/* —— 轻提示（加歌/喜欢反馈，不依赖 layer） —— */
+#bz-toast {
+    position:fixed; left:50%; bottom:84px; transform:translateX(-50%) translateY(10px);
+    background:rgba(20,22,32,.95); color:#fff; font-size:13px; padding:9px 18px;
+    border-radius:20px; box-shadow:0 4px 16px rgba(0,0,0,.3);
+    opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:10002;
+    max-width:80vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+#bz-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+/* —— 歌曲列表：加入播放列表(＋) / 喜欢(♥) 按钮 —— */
+.bz-song-list .sico { display:flex; align-items:center; gap:2px; }
+.bz-song-list .sico .bz-act { color:#c0c4cc; font-size:13px; padding:4px 3px; }
+.bz-song-list .sico .bz-act:hover { color:#1677ff; }
+.bz-song-list .sico .bz-act.liked { color:#ff3b3b; }
+/* 首页榜单行（悬停显示） */
+.bz-chart-ol li .bz-chart-act { display:none; align-items:center; gap:8px; margin-left:8px; }
+.bz-chart-ol li:hover .bz-chart-act { display:flex; }
+.bz-chart-ol .bz-chart-act .bz-act { color:#c0c4cc; font-size:13px; padding:2px 2px; }
+.bz-chart-ol .bz-chart-act .bz-act:hover { color:#1677ff; }
+.bz-chart-ol .bz-chart-act .bz-act.liked { color:#ff3b3b; }
+/* —— 歌曲详情页操作按钮（加入播放列表 / 喜欢 / 下载） —— */
+.bz-pp-acts { display:flex; justify-content:center; gap:12px; margin-top:18px; }
+.bz-pp-btn {
+    display:inline-flex; align-items:center; gap:6px; padding:8px 22px; border-radius:22px;
+    font-size:14px; color:#fff; background:linear-gradient(135deg,#69b1ff,#1677ff);
+    box-shadow:0 4px 12px rgba(22,119,255,.28); transition:all .25s; cursor:pointer;
+}
+.bz-pp-btn:hover { background:linear-gradient(135deg,#0958d9,#1677ff); color:#fff; transform:translateY(-2px); }
+.bz-pp-btn.ghost { background:#fff; color:#1677ff; border:1px solid #1677ff; box-shadow:none; }
+.bz-pp-btn.ghost:hover { background:rgba(22,119,255,.08); color:#1677ff; transform:none; }
+.bz-pp-btn.bz-like.liked { background:#ff3b3b; border-color:#ff3b3b; }
+/* 悬浮条移动端适配（叠在底部移动导航 .fed-tabr-info 上方） */
+@media screen and (max-width:750px) {
+html body { padding-bottom:118px; }
+.m-playbar, .m-playbar:not(.m-playbar-unlock) { bottom:52px; height:50px; }
+.m-playbar-wrap, .m-playbar:not(.m-playbar-unlock) .m-playbar-wrap { height:50px; padding:0 8px 0 12px; }
+.m-playbar-cover { width:36px; height:36px; }
+.m-playbar-info { max-width:110px; }
+.m-playbar-btns { gap:10px; margin-right:10px; }
+.m-playbar-right, .m-playbar-prog .m-time { display:none; }
+.m-playlist { bottom:110px; }
+#bz-toast { bottom:110px; }
+.m-playbar-unlock-btn { display:none; }
 }

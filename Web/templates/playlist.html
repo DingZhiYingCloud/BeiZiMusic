@@ -26,8 +26,12 @@
                     {% for song in songs %}
                     <li>
                         <i class="snum">{{ forloop.counter }}</i>
-                        <div class="sname"><a href="{{ song.link }}" target="_mp3" title="{{ song.title }}">{{ song.title }}</a></div>
-                        <span class="sico"><i class="fa fa-play"></i></span>
+                        <div class="sname"><a href="{{ song.link }}" title="{{ song.title }}">{{ song.title }}</a></div>
+                        <span class="sico">
+                            <a href="javascript:;" class="bz-act bz-play-ico" title="播放"><i class="fa fa-play"></i></a>
+                            <a href="javascript:;" class="bz-act bz-add" title="加入播放列表"><i class="fa fa-plus"></i></a>
+                            <a href="javascript:;" class="bz-act bz-like" title="喜欢"><i class="fa fa-heart-o"></i></a>
+                        </span>
                     </li>
                     {% empty %}
                     <div class="bz-empty"><i class="fa fa-music"></i>暂无曲目，请稍后重试</div>

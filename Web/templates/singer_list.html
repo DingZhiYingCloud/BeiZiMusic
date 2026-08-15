@@ -26,8 +26,8 @@
             <div class="bz-singers-grid">
                 {% for singer in singers %}
                 <div class="item">
-                    <div class="pic"><a href="{{ singer.link }}" target="_blank"><img src="{{ singer.pic }}" alt="{{ singer.name }}"></a></div>
-                    <a class="name" href="{{ singer.link }}" title="{{ singer.name }}" target="_blank">{{ singer.name }}</a>
+                    <div class="pic"><a href="{{ singer.link }}"><img src="{{ singer.pic }}" alt="{{ singer.name }}"></a></div>
+                    <a class="name" href="{{ singer.link }}" title="{{ singer.name }}">{{ singer.name }}</a>
                 </div>
                 {% empty %}
                 <div class="bz-empty"><i class="fa fa-user"></i>暂无歌手数据，请稍后重试</div>

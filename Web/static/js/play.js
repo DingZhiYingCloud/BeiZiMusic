@@ -94,12 +94,12 @@
             this.list = [];
         }
     };
-    // 点击歌词跳转播放到对应时间（并恢复自动跟随）
+    // 点击歌词跳转播放到对应时间（播放由全局底部悬浮条 BZPlayer 接管）
     $(document).on('click', '#lrc_list li', function() {
         var t = parseFloat($(this).attr('data-t'));
-        if (!isNaN(t) && t >= 0) {
+        if (!isNaN(t) && t >= 0 && window.BZPlayer) {
             $.lrc.userScrolling = false;
-            $('#player').jPlayer('play', t);
+            BZPlayer.seek(t);
         }
     });
 })(jQuery);
@@ -107,45 +107,3 @@
 // 预初始化 layer 模块（common.js 搜索提示等依赖 window.layer）
 layui.use(['layer'], function(){ window.layer = layui.layer; });
 
-// ===== jPlayer 播放器初始化（改造自源站 player()，直接用后端已解密的播放链接，无需前端调 play.php）=====
-function initPlayer(playUrl, coverUrl, lrcText) {
-    var time = 0;
-    // 播放链接缺失：仅展示封面与失败提示，不初始化 jPlayer
-    if (!playUrl) {
-        $(".djpic").html('<img class="rotate" id="mcover" src="' + coverUrl + '"/><div class="state"><span>播放链接获取失败</span></div>');
-        return;
-    }
-    // 播放状态事件：更新旋转封面图与状态文字
-    $("#player").bind($.jPlayer.event.pause, function() {
-        $(".djpic").html('<img class="rotate" id="mcover" src="' + coverUrl + '"/><div class="state"><span>已暂停</span></div>');
-        $("#mcover").css("animation-play-state", "paused");
-    });
-    $("#player").bind($.jPlayer.event.waiting, function() {
-        $(".djpic").html('<img class="rotate" id="mcover" src="' + coverUrl + '"/><div class="state"><span>加载中</span></div>');
-    });
-    $("#player").bind($.jPlayer.event.playing, function() {
-        $(".djpic").html('<img class="rotate" id="mcover" src="' + coverUrl + '"/><div class="state"><span class="play">播放中</span></div>');
-        $("#mcover").css("animation-play-state", "running");
-    });
-    $("#player").jPlayer({
-        ready: function() {
-            $(this).jPlayer("setMedia", { mp3: playUrl });
-            $(this).jPlayer("volume", 25);
-            // 浏览器自动播放策略：用户未交互前 play() 会被拒绝(NotAllowedError)，
-            // 监听首次交互后再播放，用户点任意位置/按键即开始
-            var tryPlay = function() { $("#player").jPlayer("play"); };
-            ['click', 'keydown', 'touchstart'].forEach(function(evt) {
-                document.addEventListener(evt, tryPlay, { once: true });
-            });
-        },
-        timeupdate: function(event) { time = event.jPlayer.status.currentTime; },
-        play: function() {
-            if (lrcText) { setTimeout(function() { $.lrc.start(lrcText, function(){ return time; }); }, 300); }
-        },
-        ended: function() { $(this).jPlayer("play"); },
-        swfPath: "/static/js",
-        solution: "html, flash",
-        supplied: "m4a,mp3",
-        wmode: "window"
-    });
-}

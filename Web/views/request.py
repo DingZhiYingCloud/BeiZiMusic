@@ -1,7 +1,14 @@
 # 项目URL配置
+import io
+import re
+import zipfile
+from urllib.parse import quote
+
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.core.cache import cache
+
+import requests
 
 from SpiderServices.Music_2t58.main import Music2t58Spider
 
@@ -97,7 +104,30 @@ def song(request, sid):
             'lyrics': '',
             'daily_recommend': [],
         }
+    data['sid'] = sid  # 供模板下载弹窗拼接下载地址
     return render(request, 'song.html', data)
+
+
+def api_song(request, sid):
+    """歌曲 JSON 接口：供全局底部播放条无刷新切歌（返回播放链接/封面/歌词等）
+
+    路径 /api/song/<sid>.json，浏览器端在切换待播放列表歌曲时调用。
+    歌词与播放链接由后端实时爬取，前端不参与解密逻辑。
+    """
+    try:
+        data = Music2t58Spider().fetch_song(sid)
+    except Exception:
+        data = {'song': {}, 'play_url': '', 'lyrics': ''}
+    song = data.get('song') or {}
+    return JsonResponse({
+        'sid': sid,
+        'name': song.get('name', ''),
+        'artists': song.get('artists', []),
+        'cover': song.get('cover', ''),
+        'play_url': data.get('play_url', ''),
+        'lyrics': data.get('lyrics', ''),
+        'singer_url': song.get('singer_url', ''),
+    })
 
 
 def search(request, keyword, page=1):
@@ -214,6 +244,109 @@ def playlist(request, sid, page=1):
             'pagination': {'links': []},
         }
     return render(request, 'playlist.html', data)
+
+
+# ============ 歌曲下载（后端代理，防防盗链与链接过期） ============
+# 说明：源站 CDN（如 kuwo）防盗链规则为拒绝源站域名 Referer（2t58.com→403），
+#       因此代理 CDN 直链时必须不带 Referer（无 Referer 或 CDN 自身域名→200）。
+def _attachment_name(filename):
+    """生成支持中文文件名的 Content-Disposition（RFC 5987 filename*）"""
+    return f"attachment; filename*=UTF-8''{quote(filename)}"
+
+
+# CDN 直链请求头：仅带浏览器 UA，不带 Referer（避免触发 CDN 防盗链 403）
+_CDN_HEADERS = {
+    'User-Agent': (
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+        'AppleWebKit/537.36 (KHTML, like Gecko) '
+        'Chrome/131.0.0.0 Safari/537.36'
+    ),
+}
+
+
+def _fetch_cdn_stream(play_url):
+    """请求源站 CDN 直链（不带 Referer），返回流式响应；失败返回 None"""
+    if not play_url:
+        return None
+    try:
+        resp = requests.get(play_url, headers=_CDN_HEADERS, stream=True, timeout=15)
+        resp.raise_for_status()
+        return resp
+    except requests.RequestException:
+        return None
+
+
+def _proxy_mp3(play_url, base):
+    """后端代理下载 MP3：无 Referer 流式转发 CDN 直链，避免防盗链 403"""
+    resp = _fetch_cdn_stream(play_url)
+    if resp is None:
+        return HttpResponse('播放链接获取失败，请稍后重试', status=502)
+
+    def stream():
+        try:
+            for chunk in resp.iter_content(chunk_size=64 * 1024):
+                if chunk:
+                    yield chunk
+        finally:
+            resp.close()
+
+    response = StreamingHttpResponse(stream(), content_type='audio/mpeg')
+    response['Content-Disposition'] = _attachment_name(f'{base}.mp3')
+    return response
+
+
+def _text_attachment(text, filename):
+    """返回文本附件（歌词 .lrc）"""
+    response = HttpResponse(text, content_type='text/plain; charset=utf-8')
+    response['Content-Disposition'] = _attachment_name(filename)
+    return response
+
+
+def _zip_attachment(play_url, lyrics, base):
+    """MP3 + 歌词打包为 zip（标准库 zipfile，无额外依赖）"""
+    resp = _fetch_cdn_stream(play_url)
+    if resp is None:
+        return HttpResponse('播放链接获取失败，请稍后重试', status=502)
+    try:
+        mp3_data = resp.content
+    finally:
+        resp.close()
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr(f'{base}.mp3', mp3_data)
+        if lyrics:
+            zf.writestr(f'{base}.lrc', lyrics)
+    response = HttpResponse(buf.getvalue(), content_type='application/zip')
+    response['Content-Disposition'] = _attachment_name(f'{base}.zip')
+    return response
+
+
+def download(request, sid, kind='mp3'):
+    """歌曲下载：kind 为 mp3（仅歌曲）/ lrc（仅歌词）/ all（两个一起打包zip）
+
+    后端统一经爬虫获取数据，直链经无 Referer 代理转发，
+    避免直链过期或防盗链导致下载失败；文件名用歌曲名-歌手。
+    """
+    spider = Music2t58Spider()
+    try:
+        data = spider.fetch_download(sid)
+    except Exception:
+        data = {'song': {}, 'play_url': '', 'lyrics': ''}
+
+    song = data.get('song') or {}
+    name = song.get('name') or f'song_{sid}'
+    artists = '/'.join(song.get('artists') or []) or '未知歌手'
+    # 清理文件名非法字符（Windows 不允许 \ / : * ? " < > | 和连续空格）
+    base = re.sub(r'[\\/:*?"<>|\s]+', '_', f'{name} - {artists}').strip('_') or f'song_{sid}'
+
+    if kind == 'mp3':
+        return _proxy_mp3(data.get('play_url', ''), base)
+    if kind == 'lrc':
+        return _text_attachment(data.get('lyrics', ''), f'{base}.lrc')
+    if kind == 'all':
+        return _zip_attachment(data.get('play_url', ''), data.get('lyrics', ''), base)
+    return HttpResponse('不支持的下载类型', status=400)
 
 
 def error_404(request, exception=None):

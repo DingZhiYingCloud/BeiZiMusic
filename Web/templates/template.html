@@ -48,7 +48,7 @@
         }
     }
     </script>
-    <link rel="stylesheet" href="/static/css/base.css?v=v2.6" />
+    <link rel="stylesheet" href="/static/css/base.css?v=v2.11" />
     <link rel="stylesheet" href="/static/layui/css/layui.min.css">
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="/static/layui/js/layui.min.js"></script>
@@ -61,6 +61,59 @@
 <body>
     {% include 'common_html/headers.html' %}
     {% block content %}{% endblock %}
+
+    <!-- 全局底部悬浮播放条（网易云 m-playbar 风格，全站固定；控制逻辑见 /static/js/player.js） -->
+    <div class="m-playbar m-playbar-unlock" id="m-playbar">
+        <a href="javascript:;" class="m-playbar-unlock-btn" id="m-btn-unlock" title="收起"><i class="fa fa-angle-down"></i></a>
+        <div class="m-playbar-wrap">
+            <!-- 左侧：封面 + 歌名/歌手 + 喜欢 -->
+            <div class="m-playbar-left">
+                <div class="m-playbar-cover"><img id="m-cover" src="" alt="封面" style="display:none;"></div>
+                <div class="m-playbar-info">
+                    <a class="m-playbar-name" id="m-song-name" href="javascript:;">暂无播放任务</a>
+                    <span class="m-playbar-artist" id="m-song-artist"></span>
+                </div>
+                <a href="javascript:;" class="m-playbar-like" id="m-btn-like" title="喜欢"><i class="fa fa-heart-o"></i></a>
+            </div>
+            <!-- 中部：播放控制 + 进度条 -->
+            <div class="m-playbar-center">
+                <div class="m-playbar-btns">
+                    <a href="javascript:;" class="m-btn-mode" id="m-btn-mode" title="列表循环"><i class="fa fa-repeat"></i><em class="m-mode-1">1</em></a>
+                    <a href="javascript:;" class="m-btn-prev" id="m-btn-prev" title="上一首"><i class="fa fa-step-backward"></i></a>
+                    <a href="javascript:;" class="m-btn-play jp-play" id="m-btn-play" title="播放"><i class="fa fa-play"></i></a>
+                    <a href="javascript:;" class="m-btn-pause jp-pause" id="m-btn-pause" title="暂停" style="display:none;"><i class="fa fa-pause"></i></a>
+                    <a href="javascript:;" class="m-btn-next" id="m-btn-next" title="下一首"><i class="fa fa-step-forward"></i></a>
+                    <a href="javascript:;" class="m-btn-list" id="m-btn-list" title="待播放列表"><i class="fa fa-list-ul"></i></a>
+                </div>
+                <div class="m-playbar-prog">
+                    <span class="m-time jp-current-time">00:00</span>
+                    <div class="jp-progress"><div class="jp-seek-bar"><div class="jp-play-bar"></div></div></div>
+                    <span class="m-time jp-duration">00:00</span>
+                </div>
+            </div>
+            <!-- 右侧：音量 -->
+            <div class="m-playbar-right">
+                <div class="m-playbar-vol">
+                    <a href="javascript:;" class="m-btn-rate" id="m-btn-rate" title="倍速播放">1x</a>
+                    <a href="javascript:;" class="jp-mute" title="静音"><i class="fa fa-volume-up"></i></a>
+                    <a href="javascript:;" class="jp-unmute" title="取消静音" style="display:none;"><i class="fa fa-volume-off"></i></a>
+                    <div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div>
+                </div>
+            </div>
+        </div>
+        <!-- 待播放列表 / 我的喜欢 面板 -->
+        <div class="m-playlist" id="m-playlist" style="display:none;">
+            <div class="m-playlist-head">
+                <a href="javascript:;" class="m-tab active" data-tab="queue">待播放列表</a>
+                <a href="javascript:;" class="m-tab" data-tab="likes">我的喜欢</a>
+                <a href="javascript:;" class="m-playlist-clear" id="m-btn-clear">清空</a>
+            </div>
+            <ul class="m-playlist-body" id="m-playlist-body"></ul>
+        </div>
+        <div id="m-playbar-player" style="width:0;height:0;position:absolute;overflow:hidden;opacity:0;"></div>
+    </div>
+    <script src="/static/js/jplayer.min.js"></script>
+    <script src="/static/js/player.js?v=v9"></script>
 
     {% block js %}{% endblock %}
     

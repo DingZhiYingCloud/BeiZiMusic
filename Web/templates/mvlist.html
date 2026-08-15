@@ -27,8 +27,8 @@
             <div class="bz-mv-grid">
                 {% for video in videos %}
                 <div class="item">
-                    <div class="pic"><a href="{{ video.link }}" target="_blank"><img src="{{ video.pic }}" alt="{{ video.title }}"><span class="play"><i class="fa fa-play"></i></span></a></div>
-                    <a class="name" href="{{ video.link }}" title="{{ video.title }}" target="_blank">{{ video.title }}</a>
+                    <div class="pic"><a href="{{ video.link }}"><img src="{{ video.pic }}" alt="{{ video.title }}"><span class="play"><i class="fa fa-play"></i></span></a></div>
+                    <a class="name" href="{{ video.link }}" title="{{ video.title }}">{{ video.title }}</a>
                 </div>
                 {% empty %}
                 <div class="bz-empty"><i class="fa fa-video-camera"></i>暂无MV数据，请稍后重试</div>
